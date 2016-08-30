@@ -29,14 +29,14 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.view.View;
 
-import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
+//import com.qualcomm.ftcrobotcontroller.FtcRobotControllerActivity;
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
@@ -49,7 +49,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 //hello!
 
-//Currently using FTC SDK released 2-9-2015
+//Currently using FTC SDK 2.0
 
 public abstract class OpMode_5220 extends LinearOpMode
 {
@@ -174,7 +174,7 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     //OTHER GLOBAL VARIABLES:
 
-    protected FtcRobotControllerActivity ftcRCA;
+    //protected FtcRobotControllerActivity ftcRCA;
     protected boolean pinOn = true;
     protected boolean programFinished = false; //allows manual termination of the program in an orderly fashion, especially for autonomous
     protected boolean debugLoopOn = false;
@@ -190,7 +190,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     {
         phase = SETUP;
 
-        ftcRCA = FtcRobotControllerActivity.ftcRCA;
+        //ftcRCA = FtcRobotControllerActivity.ftcRCA;
 
         hardwareMap.logDevices();
 
@@ -208,9 +208,6 @@ public abstract class OpMode_5220 extends LinearOpMode
         driveMotors[1] = rightFrontMotor;
         driveMotors[2] = leftBackMotor;
         driveMotors[3] = rightBackMotor;
-
-        for (DcMotor dcm: driveMotors) dcm.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        for (DcMotor dcm: driveMotors) dcm.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
         sweeperMotor1 = hardwareMap.dcMotor.get("sweeper1");
         sweeperMotor2 = hardwareMap.dcMotor.get("sweeper1");
@@ -238,7 +235,8 @@ public abstract class OpMode_5220 extends LinearOpMode
 
         colorSensorDown = hardwareMap.colorSensor.get("cSensor1");
         colorSensorFront = hardwareMap.colorSensor.get("cSensor2");
-        colorSensorFront.setI2cAddress(0x3E); //in hex, 0x3e = 62. deault address is 60 (reserved for colorSensorDown)
+        colorSensorFront.setI2cAddress(I2cAddr.create7bit(0x3E));//IF 7 BIT DOESN'T WORK TRY 8 BIT ADDRESS (I2cAddr.create8bit(0x3E)), OR USING I2CADDR CONSTRUCTOR
+        // in hex, 0x3e = 62. deault address is 60 (reserved for colorSensorDown)
         colorSensorFront.enableLed(false);
         colorSensorDown.enableLed(false);
         gyroSensor = hardwareMap.gyroSensor.get("gSensor");
@@ -384,7 +382,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         DbgLog.msg("USER MESSAGE (short): " + toWrite);
         DbgLog.error("USER MESSAGE (short): " + toWrite);
     }
-
+/*
     public void setCustomSkin() //maybe transfer this sort of app modification stuff to ftcrobotcontrolleractivity. It might be more appropriate there.
     {
         View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(R.id.scanButton);
@@ -405,7 +403,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         //button2.setOnLongClickListener(); //maybe put new teleOp thing here.
         //try adding a new listener to the buttons to make them do different things.
     }
-
+*/
     public ProgramType getProgramType () //override in any meaningful subclass
     {
         return ProgramType.UNDECIDED;
@@ -501,12 +499,12 @@ public abstract class OpMode_5220 extends LinearOpMode
         if (yaw < 0.0) toReturn = 360 + yaw;
         return toReturn;
     }
-
+/*
     public void restartRobot()
     {
         ftcRCA.requestRobotRestart();
     }
-
+*/
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //MOVEMENT:
@@ -1354,7 +1352,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     }
 
     //JUST FOR FUN:
-
+/*
     public void playMusic (int resid)
     {
         if (runConditions() && !MUSIC_ON) return;
@@ -1368,4 +1366,5 @@ public abstract class OpMode_5220 extends LinearOpMode
         mediaPlayer.stop();
         mediaPlayer = null;
     }
+    */
 }

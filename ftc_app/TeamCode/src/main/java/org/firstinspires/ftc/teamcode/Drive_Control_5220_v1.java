@@ -29,8 +29,12 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name = "Drive Control 5220", group = "Tools")
+//@Disabled
 public class Drive_Control_5220_v1 extends OpMode_5220
 {
     public static final int BACKWARDS = 0;

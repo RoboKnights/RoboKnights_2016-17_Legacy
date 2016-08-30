@@ -29,13 +29,15 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.*;
+
+import org.firstinspires.ftc.teamcode.OpMode_5220;
 
 import java.util.ArrayList;
 
@@ -52,6 +54,8 @@ Add ultrasonic sensor when we add rescue beacon detection?
 
 //NOTE: Do NOT put waitFullCycle in loops. Only put in between other stuff
 
+@Autonomous(name = "Autonomous 5220", group = "Main")
+//@Disabled
 public class Autonomous_5220_v1 extends OpMode_5220
 {
     public static final int PARK = 0;
@@ -393,7 +397,7 @@ public class Autonomous_5220_v1 extends OpMode_5220
         if (path == PARK)
         {
             move(2, 0.4);
-            playMusic(R.raw.all_i_do_is_win);
+            //playMusic(R.raw.all_i_do_is_win);
             return;
         }
 
@@ -1003,7 +1007,7 @@ public class Autonomous_5220_v1 extends OpMode_5220
     public void main ()
     {
         //new ProgramKiller().start(); //PROGRAM KILLER MESSES UP AUTONOMOUS.
-        ftcRCA.color = color;
+        //ftcRCA.color = color;
         new DebuggerDisplayLoop().start();
         waitFullCycle();
 
@@ -1026,6 +1030,6 @@ public class Autonomous_5220_v1 extends OpMode_5220
         lineBlockedTime = 27500; //just for debug
        // test();
         autonomous();
-        stopMusic();
+        //stopMusic();
     }
 }

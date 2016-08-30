@@ -29,13 +29,17 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.*;
 
+import org.firstinspires.ftc.teamcode.OpMode_5220;
+
+@TeleOp(name = "TeleOp 5220", group = "Main") //change to autonomous if making this called a teleop changes something for the worse
+//@Disabled
 public class TeleOp_5220_v1 extends OpMode_5220 //this is a comment. It is a long comment.
 {
     private static final double JOYSTICK_THRESHOLD = 0.08; //below this joysticks won't cause movement.
@@ -121,7 +125,7 @@ public class TeleOp_5220_v1 extends OpMode_5220 //this is a comment. It is a lon
         super.initialize();
         g1Stick1Xinit = gamepad1.left_stick_x;
         g1Stick1Yinit = gamepad1.left_stick_y;
-        color = ftcRCA.color;
+        //color = ftcRCA.color;
     }
 
     //MAIN PROGRAM:

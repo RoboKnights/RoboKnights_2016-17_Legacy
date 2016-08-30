@@ -29,19 +29,22 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.ftcrobotcontroller.R;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+@Autonomous(name = "Color Sensor Driver 5220", group = "Tools")
+//@Disabled
 public class ColorSensorDriver_5220 extends LinearOpMode {
 
   public enum ColorSensorDevice {ADAFRUIT, HITECHNIC_NXT, MODERN_ROBOTICS_I2C};

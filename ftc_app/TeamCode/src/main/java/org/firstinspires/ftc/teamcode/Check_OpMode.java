@@ -29,7 +29,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.teamcode;
 
 /*
 
@@ -44,6 +44,11 @@ Add ultrasonic sensor when we add rescue beacon detection?
 
 //NOTE: Do NOT put waitFullCycle in loops. Only put in between other stuff
 
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name = "CheckOpMode 5220", group = "Tools")
+//@Disabled
 public class Check_OpMode extends OpMode_5220
 {
     public ProgramType getProgramType ()
