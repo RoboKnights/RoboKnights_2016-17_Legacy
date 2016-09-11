@@ -67,6 +67,8 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final boolean LEFT = false;
     protected static final boolean UP = true;
     protected static final boolean DOWN = false;
+    protected static final boolean NEAR = true;
+    protected static final boolean FAR = false;
 
     protected static enum ProgramType {UNDECIDED, AUTONOMOUS, TELEOP};
     protected static ProgramType programType = ProgramType.UNDECIDED;
@@ -312,6 +314,11 @@ public abstract class OpMode_5220 extends LinearOpMode
     //HELPER CLASSES AND METHODS:
     //______________________________________________________________________________________________________________
 
+    public final boolean xor (boolean x, boolean y)
+    {
+        return ((x || y) && !(x && y));//make sure this works
+    }
+
     public class Stopwatch
     {
         private final long start;
@@ -536,6 +543,17 @@ public abstract class OpMode_5220 extends LinearOpMode
         setLeftDrivePower(power);
         setRightDrivePower(power);
     }
+
+    void setStrafePower (double power)
+    {
+        setMotorPower (leftFrontMotor, power);
+        setMotorPower (rightFrontMotor, -power);
+        setMotorPower (leftBackMotor, -power);
+        setMotorPower (rightBackMotor, power);
+    }
+
+    //add setLeftStrafePower and setRightStrafePower once I figure out turning which wheels makes it go where.
+
 
     public final void stopDrivetrain ()
     {
