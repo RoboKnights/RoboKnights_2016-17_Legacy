@@ -49,7 +49,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 //hello!
 
-//Currently using FTC SDK 2.0
+//Currently using FTC SDK 2.2
 
 public abstract class OpMode_5220 extends LinearOpMode
 {

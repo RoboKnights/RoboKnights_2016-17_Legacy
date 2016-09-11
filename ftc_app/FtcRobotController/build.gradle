@@ -26,11 +26,4 @@ repositories {
     }
 }
 
-repositories {
-    flatDir {
-        dirs 'libs', 'C:\\navx-micro\\android\\libs'
-    }
-}
-
-
 apply from: 'build.release.gradle'
