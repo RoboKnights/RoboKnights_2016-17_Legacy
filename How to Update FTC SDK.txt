@@ -1,0 +1,17 @@
+HOW TO UPDATE THE FTC SDK:
+
+Step 1: Download the newest FTC SDK from https://github.com/ftctechnh/ftc_app.
+Step 2: Extract all from the ZIP file.
+Step 3: Go into the folder into which you extracted the ZIP file. Cut-paste the INNER ftc-app-master (or ftc-app-beta) folder from that location into the RoboKnights_2016-17 folder (whatever its local path is).
+Step 4: Delete all the pdf files in the doc-->tutorial folder of the new ftc-app-master folder.
+Step 5: Delete the TeamCode folder from inside the new ftc-app-master folder.
+Step 6: Copy paste the TeamCode folder from the ftc-app folder into the ftc-app-master folder.
+Step 7: Rename the ftc-app folder to ftc-app_[CURRENT DATE].
+Step 8: Rename the ftc-app-master folder to ftc-app.
+Step 9: Move the old ftc-app_[CURRENT DATE] folder somewhere outside of the repository.
+Step 10: Open up Android Studio, select "import project", and select the ftc-app folder. Then wait for the gradle sync and build to finish. It might take a few minutes.
+Step 11: Once it is confirmed in android studio that everything is working fine with the new SDK (no errors or other problems), save the project and close Android Studio.
+Step 12: Open up GitHub Desktop, and double check nothing was accidentally deleted or added. 
+Step 13: Commit the changes in GitHub with title "Update to FTC SDK [NEW VERSION NUMBER]" and description "Updated FTC SDK from version [OLD VERSION NUMBER] to [NEW VERSION NUMBER].".
+Step 14: Sync the changes to the remote.
+Step 15: Once it is confirmed that the changes have been synced to the remote (the new commit should be visible online at https://github.com/RoboKnights/RoboKnights_2016-17), delete the old locally stored ftc-app_[CURRENT DATE} folder.
