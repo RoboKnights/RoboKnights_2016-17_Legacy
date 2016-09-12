@@ -41,14 +41,11 @@ import org.firstinspires.ftc.teamcode.OpMode_5220;
 
 import java.util.ArrayList;
 
-/*
 
-TODO:
 
-Add option to (try to) dump blocks in low goal before climbing ramp on our side
-Add option to try to drive to other side of field (make sure its allowed), climb up the ramp of our color there, and position for scoring in the medium goal. probably terminate if gyro reads too much directional change.
-Add ultrasonic sensor when we add rescue beacon detection?
-*/
+//TODO:
+
+//IDEA: Use ultrasonic sensor to detect if we are being blocked from proceding to the second beacon, and if that is the case, immediately drive back to the first beacon, re-align, then go shoot as if second beacon was never attempted.
 
 //Hello world.
 

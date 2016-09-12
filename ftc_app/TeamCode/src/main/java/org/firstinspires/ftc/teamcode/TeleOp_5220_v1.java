@@ -33,6 +33,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.*;
 
@@ -140,6 +141,13 @@ public class TeleOp_5220_v1 extends OpMode_5220 //this is a comment. It is a lon
 
         double swivelMovementStart = 0.0;
 
+        boolean strafing = false;
+        boolean reverse = false;
+
+        Gamepad prevGamepad1 = new Gamepad(); //IF USING THESE GAMEPAD OBJECTS WORKS, REPLACE ALL THE INDIVIDUAL BOOLEANS BELOW WITH THEIR PREVGAMEPAD OBJECT COUNTERPARTS.
+        Gamepad prevGamepad2 = new Gamepad();
+
+
         boolean prevTopHatUp1 = false; //maybe change these initialization if they mess something up
         boolean prevTopHatDown1 = false;
         boolean prevTopHatLeft1 = false;
@@ -166,7 +174,7 @@ public class TeleOp_5220_v1 extends OpMode_5220 //this is a comment. It is a lon
         while (runConditions())
         {
             //DRIVETRAIN CONTROL:
-
+/*
             double throttle = (-(gamepad1.left_stick_y - g1Stick1Yinit));
             double direction = (gamepad1.left_stick_x - g1Stick1Xinit);
 
@@ -207,24 +215,24 @@ public class TeleOp_5220_v1 extends OpMode_5220 //this is a comment. It is a lon
             else
             {
 
-                if (right > 1)
+                if (rightPower > 1)
                 {
-                    right = 1;
+                    rightPower = 1;
                 }
 
-                if (right < -1)
+                if (rightPower < -1)
                 {
-                    right = -1;
+                    rightPower = -1;
                 }
 
-                if (left > 1)
+                if (leftPower > 1)
                 {
-                    left = 1;
+                    leftPower = 1;
                 }
 
-                if (left < -1)
+                if (leftPower < -1)
                 {
-                    left = -1;
+                    leftPower = -1;
                 }
             }
 
@@ -253,12 +261,165 @@ public class TeleOp_5220_v1 extends OpMode_5220 //this is a comment. It is a lon
             }
 
             //we don't need reverse drive for now
-/*
+
             if (gamepad2.b != prevB2 && gamepad2.b) //acts on button press
             {
                 reverseDriveOn = !reverseDriveOn;
             }
 */
+
+
+
+                double leftPower;
+                double rightPower;
+                // Driving wheels using y1,x1 joystick
+/*
+                if (!reverse)
+                {
+                    leftPower = gamepad1.left_stick_y * 0.8 + gamepad1.left_stick_x * 0.8;
+                    rightPower = gamepad1.left_stick_y * 0.8 - gamepad1.left_stick_x * 0.8;
+                }
+
+                else
+                {
+                    leftPower = gamepad1.left_stick_y * 0.8 - gamepad1.left_stick_x * 0.8;
+                    rightPower = gamepad1.left_stick_y * 0.8 + gamepad1.left_stick_x * 0.8;
+                }
+*/
+                double throttle = (-(gamepad1.left_stick_y - g1Stick1Yinit));
+                double direction = (gamepad1.left_stick_x - g1Stick1Xinit);
+
+                if (reverse)
+                {
+                    throttle = -throttle;
+                }
+
+                rightPower = throttle - direction;
+                leftPower = throttle + direction;
+
+                rightPower = Range.clip(rightPower, -2, 2);
+                leftPower = Range.clip(leftPower, -2, 2);
+
+/* NOT USING DPAD FOR NOW
+                if ((leftPower < 15 && leftPower> -15) && (rightPower < 15 && rightPower > -15))
+                {
+                    int powerVal = 15;
+                    int turnPowerVal = 15;
+                    int topHatVal = joystick.joy1_TopHat;
+                    if (topHatVal == 0)
+                    {
+                        // go forward
+                        leftPower = powerVal;
+                        rightPower = powerVal;
+                    }
+                    else if (topHatVal == 4)
+                    {
+                        // go backward
+                        leftPower = -powerVal;
+                        rightPower = -powerVal;
+                    }
+                }
+                */
+                boolean powersZero = true;
+                if (Math.abs (leftPower) < 0.05)
+                {
+                    leftPower = 0;
+                }
+                else powersZero = false;
+
+                if (Math.abs (rightPower) < 0.05)
+                {
+                    rightPower = 0;
+                }
+                else powersZero = false;
+
+                if (powersZero)
+                {
+                    double frontPower;
+                    double backPower;
+/*
+                    frontPower = joystick.joy1_y2 * 0.8 + joystick.joy1_x2 * 0.8; //reverse + and - signs if direction is wrong.
+                    backPower = joystick.joy1_y2 * 0.8 - joystick.joy1_x2 * 0.8;
+
+                    if (reverse)
+                    {
+                        frontPower = -frontPower;
+                        backPower = -backPower;
+                    }
+*/
+
+                    throttle = (-(gamepad1.right_stick_y - g1Stick1Yinit));
+                    direction = (gamepad1.right_stick_x - g1Stick1Xinit);
+
+                    if (reverse)
+                    {
+                        throttle = -throttle;
+                    }
+
+                    backPower = throttle - direction; //SWITCH THESE AROUND IF THIS ENDS UP BEING THE WRONG WAY
+                    frontPower = throttle + direction;
+
+                    backPower = Range.clip(backPower, -2, 2);
+                    frontPower = Range.clip(frontPower, -2, 2);
+
+                    if (Math.abs (frontPower) < 0.05)
+                    {
+                        frontPower = 0;
+                    }
+
+                    if (Math.abs (backPower) < 0.05)
+                    {
+                        backPower = 0;
+                    }
+/*
+                    if (frontPower == 0 && backPower == 0)
+                    {
+                        int strafePowerVal = 15;
+                        int topHatVal = joystick.joy1_TopHat;
+
+                        if (topHatVal == 6)
+                        {
+                            // go forward
+                            frontPower = strafePowerVal;
+                            backPower = -strafePowerVal;
+                        }
+                        else if (topHatVal == 2)
+                        {
+                            // go backward
+                            frontPower = -strafePowerVal;
+                            backPower = strafePowerVal;
+                        }
+                    }
+*/
+                    setMotorPower(leftFrontMotor, frontPower);
+                    setMotorPower(rightFrontMotor, backPower);
+                    setMotorPower(leftBackMotor, backPower);
+                    setMotorPower(rightBackMotor, frontPower);
+                    strafing = true;
+                }
+
+                else
+                {
+                    strafing = false;
+                }
+
+                if (!strafing)
+                {
+                    if (reverse)
+                    {
+                        leftPower = -leftPower;
+                        rightPower = -rightPower;
+                    }
+
+                    setLeftDrivePower(leftPower);
+                    setRightDrivePower(rightPower);
+                }
+
+                if (gamepad1.back)
+                {
+                    reverse = !reverse;
+                    sleep (20);
+                }
 
             //DUMPER CONTROL:
 
@@ -507,6 +668,17 @@ public class TeleOp_5220_v1 extends OpMode_5220 //this is a comment. It is a lon
             prevLT2 = gamepad2.left_trigger > 0.7;
             prevRB2 = gamepad2.right_bumper;
             prevRT2 = gamepad2.right_trigger > 0.7;
+
+            try
+            {
+                prevGamepad1.copy(gamepad1);
+                prevGamepad2.copy(gamepad2);
+            }
+
+            catch (RobotCoreException rce)
+            {
+                writeToLog("prevGamepad Copying Error.");
+            }
 
            // telemetry.addData("9", "RSA: " + resetAutomationOn);
             waitNextCycle();

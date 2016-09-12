@@ -101,7 +101,7 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     //CONFIGURABLE CONSTANTS:
 
-    protected static final boolean TIMER_ON = false;
+    protected static final boolean TIMER_ON = false; //ALWAYS KEEP THIS OFF UNTIL/UNLESS WE DECIDE TO USE IT AND FIX THE CODE FOR USING THE IN-CODE TIME LIMIT (in runConditions)
     protected static final int TIMER_STOP_BUFFER = 500; //in millis
 
     protected static final double DEFAULT_DRIVE_POWER = 1.0;
@@ -416,7 +416,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         return ProgramType.UNDECIDED;
     }
 
-    public boolean runConditions()
+    public final boolean runConditions()
     {
         int maxTime;
 
