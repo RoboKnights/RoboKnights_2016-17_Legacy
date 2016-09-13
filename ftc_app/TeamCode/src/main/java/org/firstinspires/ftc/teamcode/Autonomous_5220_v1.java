@@ -489,14 +489,13 @@ public class Autonomous_5220_v1 extends OpMode_5220
 
         while (runConditions() && touchSensorFront.getValue() < 0.04)
         {
-
+            //INSERT NEW BETTER LINE FOLLOWING ALGORITHM USING MECANUM WHEELS HERE
         }
 
         sleep(50);
         stopDrivetrain();
         moveTime(200, 0.32);
         stopDrivetrain();
-        //
     }
 
     private void scoreRescueBeacon ()

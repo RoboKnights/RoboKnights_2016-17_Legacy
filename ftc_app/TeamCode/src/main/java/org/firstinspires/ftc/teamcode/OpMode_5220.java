@@ -436,7 +436,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         return (opModeIsActive() && (!programFinished) && timeValid);
     }
 
-    public int distanceToEncoderCount (double distance) //distance is in inches
+    public int distanceToEncoderCount (double distance) //distance is in inches. MAKE SURE HAVING MECANUM WHEELS DOES NOT AFFECT THE ACCURACY OF DOING THIS CONVERSION BY PURE MATH
     {
         double wheelRotations = distance / WHEEL_CIRCUMFERENCE;
         double motorRotations = wheelRotations / GEAR_RATIO;
@@ -444,20 +444,13 @@ public abstract class OpMode_5220 extends LinearOpMode
         return (int) encoderCounts;
     }
 
+    public int distanceToStrafeEncoderCount (double distance) //THIS CANNOT BE DONE BY MATH. THIS CONVERSION FACTOR MUST BE DETERMINED EMPIRICALLY.
+    {
+        return ((int) (distance * ((double)ENCODER_COUNTS_PER_ROTATION / 4.5))); //TEMPORARY STAND-IN UNTIL WE ACTUALLY FIGURE OUT THE CONVERSION RATIO. This guesstimate assumes that one rotation of the wheels moves the robot 4.5 inches sideways.
+    }
+
     public void sleep(int millis) //change back to old way if the new way doesn't work
     {
-        /*
-        try
-        {
-            Thread.sleep(millis);
-        }
-
-        catch (Exception e)
-        {
-            System.exit(0);
-        }
-        */
-
         int startTime = gameTimer.time();
         while (runConditions() && (gameTimer.time() < startTime + millis))
         {
@@ -564,14 +557,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     }
 
     public final void resetDriveEncoders ()
-    {/*
-        for (DcMotor motor: driveMotors)
-        {
-            motor.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-            motor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        }
-        */
-
+    {
         for (DcMotor dcm: driveMotors)
         {
             resetEncoder(dcm);
@@ -655,19 +641,15 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     public final int getDriveEncoderAverage ()
     {
-        /*
-        int sum = 0;
-        for (DcMotor dcm: driveMotors)
-        {
-            sum = sum + getEncoderValue(dcm);
-        }
-
-        double average = (sum / 4.0); //make sure double conversion works
-        int intAverage = (int) average;
-        return intAverage;
-        */
         double doubleAverage = (1.0 * (getSideEncoderAverage(LEFT) + getSideEncoderAverage(RIGHT))) / 2.0;
         return (int) doubleAverage;
+    }
+
+    public final int getStrafeEncoderAverage ()
+    {
+        double sum = getEncoderValue(leftFrontMotor) + getEncoderValue(rightBackMotor) - getEncoderValue(rightFrontMotor) - getEncoderValue(leftBackMotor);
+        double average = sum / 4;
+        return (int) average;
     }
 
     public final int getTurnEncoderAverage ()
@@ -698,6 +680,26 @@ public abstract class OpMode_5220 extends LinearOpMode
         }
     }
 
+    public final boolean strafeEncodersHaveReached(int encoderCount)
+    {
+        //return (hasEncoderReached(leftFrontMotor, encoderCount) && hasEncoderReached(rightFrontMotor, encoderCount)); //OLD METHOD
+        if (encoderCount > 0)
+        {
+            if (getStrafeEncoderAverage() < encoderCount) return false;
+            else return true;
+        }
+
+        else if (encoderCount < 0)
+        {
+            if (getStrafeEncoderAverage() > encoderCount) return false;
+            else return true;
+        }
+
+        else //encoderCount is 0
+        {
+            return (getStrafeEncoderAverage() == 0);
+        }
+    }
 
     public final boolean turnEncodersHaveReached(int encoderCount)
     {
@@ -780,14 +782,14 @@ public abstract class OpMode_5220 extends LinearOpMode
 
         resetDriveEncoders();
         writeToLog("MOVING: Initialized encoder values (should be 0) are LFM: " + getEncoderValue(leftFrontMotor) + ", RFM = " + getEncoderValue(rightFrontMotor));
-        setDrivePower(power);
+
 
         int i = 0;
         int prevYawsSize = 7;
         ArrayList<Double> prevYaws = new ArrayList<Double>(prevYawsSize);
         for (int j = 0; j < prevYawsSize; j++) prevYaws.add(0.0);
 
-
+        setDrivePower(power);
         //double prevYaw;
 
         while (runConditions() && !driveEncodersHaveReached(encoderCount)) //change back to runConditions if it works, change back to driveEncodersHaveReached if it works
@@ -938,6 +940,134 @@ public abstract class OpMode_5220 extends LinearOpMode
         if (!runConditions()) return;
         waitFullCycle();
         //stopDrivetrain();
+    }
+
+    public final void strafe (double distance, double... params)
+    {
+        if (!runConditions()) return;
+
+        double power = DEFAULT_DRIVE_POWER;
+        double mode = NORMAL;
+
+        if (params.length > 2)
+        {
+            return;
+        }
+
+        else if (params.length == 1)
+        {
+            if (Math.abs(params[0]) < 1.1) //second parameter is power, 1.1 used instead of 1 to completely deal with floating point inaccuracy
+            {
+                power = params[0];
+            }
+
+            else
+            {
+                mode = params[0];
+                if (mode != NORMAL)
+                {
+                    power = DEFAULT_SYNC_POWER;
+                }
+            }
+        }
+
+        else if (params.length == 2)
+        {
+            power = params[0];
+            mode = params[1];
+        }
+
+        //Main method body:
+
+        if (power * distance < 0)
+        {
+            power = -power;
+        }
+
+        int encoderCount = distanceToStrafeEncoderCount(distance);
+        writeToLog("STRAFING: Distance = " + distance + ", Encoder Count = " + encoderCount + ", Mode = " + getModeText(mode) + ", Power = " + power);
+        writeToLog("STRAFING: UnReset encoder values are LFM: " + getEncoderValue(leftFrontMotor) + ", " + getEncoderValue(rightFrontMotor));
+        navX.zeroYaw();
+
+        double powerChange = 0;
+        double updateTime = ((mode == ENCODER) ? ENCODER_SYNC_UPDATE_TIME : GYRO_SYNC_UPDATE_TIME);
+
+        resetDriveEncoders();
+        writeToLog("STRAFING: Initialized encoder values (should be 0) are LFM: " + getEncoderValue(leftFrontMotor) + ", RFM = " + getEncoderValue(rightFrontMotor));
+/*
+        int i = 0;
+        int prevYawsSize = 7;
+        ArrayList<Double> prevYaws = new ArrayList<Double>(prevYawsSize);
+        for (int j = 0; j < prevYawsSize; j++) prevYaws.add(0.0);
+*/
+        setStrafePower(power);
+
+
+        //double prevYaw;
+
+        while (runConditions() && !strafeEncodersHaveReached(encoderCount)) //change back to runConditions if it works, change back to driveEncodersHaveReached if it works
+        {
+            //if (i >= 2) i = 0;
+
+            if (mode != NORMAL)
+            {
+                /*
+                if (mode == ENCODER)
+                {
+                    double frontDifference = getEncoderValue(leftFrontMotor) - getEncoderValue(rightFrontMotor);
+                    double backDifference = getEncoderValue(leftBackMotor) - getEncoderValue(rightBackMotor);
+                    double averageDifference = (frontDifference + backDifference) / 2;
+                    powerChange = backDifference * ENCODER_SYNC_PROPORTIONALITY_CONSTANT;
+                }
+
+                else if (mode == GYRO)
+                {
+                    double yaw = navX.getYaw();
+                    if (prevYaws.size() >= prevYawsSize) prevYaws.remove(0);
+                    prevYaws.add(yaw);
+                    powerChange = yaw * GYRO_SYNC_PROPORTIONALITY_CONSTANT;
+                    if (prevYaws.size() >= prevYawsSize)
+                    {
+                        double roc = (yaw - prevYaws.get(prevYaws.size() - 2)) / updateTime;
+                        powerChange = powerChange - (GYRO_SYNC_DIFFERENTIAL_CONSTANT * roc);
+
+                        double sum = 0;
+                        for (Double d: prevYaws)
+                        {
+                            sum += d;
+                        }
+
+                        powerChange = powerChange + (sum * GYRO_SYNC_INTEGRAL_CONSTANT);
+                    }
+
+                }
+
+                setLeftDrivePower(Range.clip(power - powerChange, -1.0, 1.0));
+                setRightDrivePower(Range.clip(power + powerChange, -1.0, 1.0));
+
+                double initTime = gameTimer.time();
+                while ((gameTimer.time() - initTime) < updateTime)
+                {
+                    if (driveEncodersHaveReached(encoderCount))
+                    {
+                        break;
+                    }
+                }
+                if (i == 0) writeToLog("IMU YAW: " + navX.getYaw());
+                i++;
+                */
+            }
+
+            //waitFullCycle();
+
+            //do nothing if mode is NORMAL.
+        }
+        stopDrivetrain();
+        if (!runConditions()) return;
+        //writeToLog("MOVING: Final encoder values are LFM: " + getEncoderValue(leftFrontMotor) + ", " + getEncoderValue(rightFrontMotor));
+        waitFullCycle();
+        //waitFullCycle();
+        sleep(99); //maybe reduce this if it wastes too much time to have this safety interval.
     }
 
     //ROTATION:
