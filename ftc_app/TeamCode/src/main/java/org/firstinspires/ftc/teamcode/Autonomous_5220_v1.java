@@ -68,7 +68,7 @@ public class Autonomous_5220_v1 extends OpMode_5220
     private boolean color = RED; //arbitrary default
     private int startPosition = START_RAMP;
     private int startWaitTime = 0; //in seconds, no need for non-integer numbers.
-    private boolean firstBeacon = true;
+    private boolean firstBeacon = NEAR;
     private boolean secondBeaconOn = true;
 
     public ProgramType getProgramType ()
@@ -308,6 +308,7 @@ public class Autonomous_5220_v1 extends OpMode_5220
         }
 
         beaconToShootingPosition();
+        shootAutonomousBalls();
         sleep(100);
     }
 
@@ -331,7 +332,7 @@ public class Autonomous_5220_v1 extends OpMode_5220
 
             }
 
-            else if (startPosition == START_CORNER) //untested
+            else if (startPosition == START_CORNER)
             {
                 if(firstBeacon == NEAR)
                 {
@@ -434,6 +435,13 @@ public class Autonomous_5220_v1 extends OpMode_5220
 
             }
         }
+    }
+
+    private void shootAutonomousBalls()
+    {
+        shoot();
+        shoot();
+        shoot();
     }
 
     private void waitForLine ()

@@ -49,6 +49,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 //hello!
 
+//TRY TO ADD METHODS FOR STRAFING DIAGONALLY (USING ONLY TWO WHEELS)
+
 //Currently using FTC SDK 2.2
 
 public abstract class OpMode_5220 extends LinearOpMode
@@ -1350,6 +1352,11 @@ public abstract class OpMode_5220 extends LinearOpMode
     }
 
     //ATTACHMENTS:
+
+    public final void shoot ()
+    {
+        //shoot a ball
+    }
 
     public static final double DUMPER_UP = 1.0;
     public static final double DUMPER_DOWN = 0.1;
