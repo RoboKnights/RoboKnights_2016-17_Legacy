@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.OpMode_5220;
 
 @TeleOp(name = "TeleOp 5220", group = "Main") //change to autonomous if making this called a teleop changes something for the worse
 //@Disabled
-public class TeleOp_5220_v1 extends OpMode_5220 //this is a comment. It is a long comment.
+public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long comment.
 {
     private static final double JOYSTICK_THRESHOLD = 0.08; //below this joysticks won't cause movement.
     private static final double SLOW_POWER = 0.10;

@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "Drive Control 5220", group = "Tools")
 //@Disabled
-public class Drive_Control_5220_v1 extends OpMode_5220
+public class Drive_Control_5220 extends OpMode_5220
 {
     public static final int BACKWARDS = 0;
     public static final int FORWARDS = 1;

@@ -31,16 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.ftccommon.DbgLog;
-import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.*;
-import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.util.*;
-
-import org.firstinspires.ftc.teamcode.OpMode_5220;
-
-import java.util.ArrayList;
-
 
 
 //TODO:
@@ -53,7 +44,7 @@ import java.util.ArrayList;
 
 @Autonomous(name = "Autonomous 5220", group = "Main")
 //@Disabled
-public class Autonomous_5220_v1 extends OpMode_5220
+public class Autonomous_5220 extends OpMode_5220
 {
     public static final int START_RAMP = 0;
     public static final int START_CORNER = 1;
@@ -63,7 +54,7 @@ public class Autonomous_5220_v1 extends OpMode_5220
     public double lineBlockedTime = 19500;
     private boolean lineBlocked = false;
 
-    private Autonomous_5220_v1 opMode = this;
+    private Autonomous_5220 opMode = this;
 
     private boolean color = RED; //arbitrary default
     private int startPosition = START_RAMP;
