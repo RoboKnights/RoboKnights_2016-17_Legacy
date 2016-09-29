@@ -276,12 +276,12 @@ public class Autonomous_5220 extends OpMode_5220
         super.initialize(); //do everything in the original, common initialization.
         new ConfigLoop().start(); //
         waitFullCycle();
-        colorSensorDown.enableLed(true);
+        //colorSensorDown.enableLed(true);
     }
 
     public void test() //for debug, whenever we want to test something independent of the rest of the autonomous program
     {
-        telemetry.addData("1", "Started moving.");
+        move (20);
     }
 
     public void autonomous ()
@@ -538,11 +538,13 @@ public class Autonomous_5220 extends OpMode_5220
         lineBlockedTime = lineBlockedTime + startWaitTime; //intentionally disabling this stall detection for now
         if (startPosition == START_CORNER) lineBlockedTime = lineBlockedTime + 12; //tiny value is intentional, blue is about as fast as red.
 */
-        colorSensorDown.enableLed(true);
-        waitFullCycle();
-        colorSensorDown.enableLed(true);
-        waitFullCycle();
 
+        /*
+        colorSensorDown.enableLed(true);
+        waitFullCycle();
+        colorSensorDown.enableLed(true);
+        waitFullCycle();
+*/
         while (gameTimer.time() < (startWaitTime * 1000))
         {
 

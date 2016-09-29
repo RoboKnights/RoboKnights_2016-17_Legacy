@@ -87,19 +87,6 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     protected static final int ENCODER_COUNTS_PER_ROTATION = 1120; //WAS 1440
 
-    protected static final double SWIVEL_INIT = 0.7529; //// may be reset in TeleOp
-    protected static final double SWIVEL_90 = 0.4706;
-    protected static final double SWIVEL_180 = SWIVEL_90 * 2;
-    protected static final double SWIVEL_360 = SWIVEL_180 * 2;
-
-    protected static final double LEFT_CLIMBER_INIT = 0.0;
-    protected static final double RIGHT_CLIMBER_INIT = 0.9;
-    protected static final double CLIMBER_OFFSET = 0.7;
-
-    protected static final double LEFT_HOOK_ADJUST_INIT = 1.0;
-    protected static final double RIGHT_HOOK_ADJUST_INIT = 0.0;
-    protected static final double HOOK_ADJUST_OFFSET = 1.0;
-
 
     //CONFIGURABLE CONSTANTS:
 
@@ -139,28 +126,11 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected DcMotor rightFrontMotor;
     protected DcMotor leftBackMotor;
     protected DcMotor rightBackMotor;
-    protected DcMotor sweeperMotor1;
-    protected DcMotor sweeperMotor2;
-    protected DcMotor slideMotor;
-    protected DcMotor liftMotor1;
-    protected DcMotor liftMotor2;
 
     protected DcMotor[] driveMotors = new DcMotor[4];
     protected int[] driveMotorInitValues = new int[4];
-    protected int slideInit;
 
     protected Servo swivelServo;
-    protected Servo releaseServo;
-    protected Servo buttonServo;
-    protected Servo leftWallServo;
-    protected Servo rightWallServo;
-    protected Servo leftDumpServo;
-    protected Servo rightDumpServo;
-    protected Servo leftClimberServo;
-    protected Servo rightClimberServo;
-    protected Servo hookServo;
-    protected Servo leftHookAdjustServo;
-    protected Servo rightHookAdjustServo;
 
     protected double swivelServoInit;
 
@@ -179,13 +149,10 @@ public abstract class OpMode_5220 extends LinearOpMode
     //OTHER GLOBAL VARIABLES:
 
     //protected FtcRobotControllerActivity ftcRCA;
-    protected boolean pinOn = true;
     protected boolean programFinished = false; //allows manual termination of the program in an orderly fashion, especially for autonomous
     protected boolean debugLoopOn = false;
     protected Stopwatch gameTimer;
-    protected boolean isArmMoving = false;
     protected int phase = HAS_NOT_STARTED;
-    protected double swivelPosition;
 
     protected MediaPlayer mediaPlayer;
     public static final boolean MUSIC_ON = true;
@@ -198,7 +165,7 @@ public abstract class OpMode_5220 extends LinearOpMode
 
         hardwareMap.logDevices();
 
-        cdim = hardwareMap.deviceInterfaceModule.get("Device Interface Module 4");
+        //cdim = hardwareMap.deviceInterfaceModule.get("Device Interface Module 4");
 
         leftFrontMotor = hardwareMap.dcMotor.get("lf");
         rightFrontMotor = hardwareMap.dcMotor.get("rf");
@@ -213,30 +180,9 @@ public abstract class OpMode_5220 extends LinearOpMode
         driveMotors[2] = leftBackMotor;
         driveMotors[3] = rightBackMotor;
 
-        sweeperMotor1 = hardwareMap.dcMotor.get("sweeper1");
-        sweeperMotor2 = hardwareMap.dcMotor.get("sweeper1");
-        sweeperMotor1.setDirection(DcMotor.Direction.REVERSE);
-        sweeperMotor2.setDirection(DcMotor.Direction.REVERSE);
-        slideMotor = hardwareMap.dcMotor.get("slides");
-        slideInit = slideMotor.getCurrentPosition();
+        //swivelServo = hardwareMap.servo.get("sServo");
 
-        //configure lift motors
-        liftMotor1 = hardwareMap.dcMotor.get("lm1");
-        liftMotor2 = hardwareMap.dcMotor.get("lm2");
-
-        swivelServo = hardwareMap.servo.get("sServo");
-        releaseServo = hardwareMap.servo.get("rServo");
-        buttonServo = hardwareMap.servo.get("bServo");
-        leftWallServo = hardwareMap.servo.get ("lwServo");
-        rightWallServo = hardwareMap.servo.get ("rwServo");
-        leftDumpServo = hardwareMap.servo.get("ldServo");
-        rightDumpServo = hardwareMap.servo.get("rdServo");
-        leftClimberServo = hardwareMap.servo.get("lcServo");
-        rightClimberServo = hardwareMap.servo.get("rcServo");
-        hookServo = hardwareMap.servo.get("hServo");
-        leftHookAdjustServo = hardwareMap.servo.get("laServo");
-        rightHookAdjustServo = hardwareMap.servo.get("raServo");
-
+/*
         colorSensorDown = hardwareMap.colorSensor.get("cSensor1");
         colorSensorFront = hardwareMap.colorSensor.get("cSensor2");
         colorSensorFront.setI2cAddress(I2cAddr.create7bit(0x3E));//IF 7 BIT DOESN'T WORK TRY 8 BIT ADDRESS (I2cAddr.create8bit(0x3E)), OR USING I2CADDR CONSTRUCTOR
@@ -245,25 +191,21 @@ public abstract class OpMode_5220 extends LinearOpMode
         colorSensorDown.enableLed(false);
         gyroSensor = hardwareMap.gyroSensor.get("gSensor");
         touchSensorFront = hardwareMap.touchSensor.get("tSensor1");
+        */
 
+/*
         navX = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("Device Interface Module 4"),
                 NAVX_DIM_I2C_PORT,
                 AHRS.DeviceDataType.kProcessedData);
+                */
     }
 
     public void initialize()
     {
-        moveDumper(DOWN);
-        leftClimberServo.setPosition(LEFT_CLIMBER_INIT);
-        rightClimberServo.setPosition(RIGHT_CLIMBER_INIT);
-        buttonServo.setPosition(0.1);
-        hookServo.setPosition(1.0);
-        swivelServo.setPosition(SWIVEL_INIT);
-        leftHookAdjustServo.setPosition(LEFT_HOOK_ADJUST_INIT);
-        rightHookAdjustServo.setPosition(RIGHT_HOOK_ADJUST_INIT);
+        //swivelServo.setPosition(SWIVEL_INIT);
 
         waitFullCycle();
-
+/*
         gyroSensor.calibrate();
         while (runConditions() && gyroSensor.isCalibrating())
         {
@@ -272,14 +214,13 @@ public abstract class OpMode_5220 extends LinearOpMode
         waitFullCycle();
         gyroSensor.resetZAxisIntegrator();
         waitFullCycle();
+*/
+        //navX.zeroYaw();
 
-        navX.zeroYaw();
-
-        moveWall(DOWN);
         phase = INIT;
 
-        writeToLog ("Down: " + colorSensorDown.getI2cAddress());
-        writeToLog("Front: " + colorSensorFront.getI2cAddress());
+        //writeToLog ("Down: " + colorSensorDown.getI2cAddress());
+        //writeToLog("Front: " + colorSensorFront.getI2cAddress());
 
     }
 
@@ -302,7 +243,6 @@ public abstract class OpMode_5220 extends LinearOpMode
 
         phase = RUNNING;
         gameTimer = new Stopwatch();
-        if (pinOn) releasePin();
 
         main();
         end();
@@ -365,12 +305,9 @@ public abstract class OpMode_5220 extends LinearOpMode
 
                 telemetry.addData("2", "LFM: " + leftFrontMotor.getCurrentPosition() + ", RFM: " + rightFrontMotor.getCurrentPosition());
                 telemetry.addData("3", "LBM: " + leftBackMotor.getCurrentPosition() + ", RBM: " + rightBackMotor.getCurrentPosition());
-                telemetry.addData("4", "Swivel: " + df.format(swivelServo.getPosition()) + ", Dumper: " + df.format(leftDumpServo.getPosition()));
-                telemetry.addData("5", "Slides:" + getSlidePosition());
-
-                telemetry.addData("6", "Down: R = " + colorSensorDown.red() + ", G = " + colorSensorDown.green() + ", B = " + colorSensorDown.blue() + ", A = " +  colorSensorDown.alpha());
-                telemetry.addData("7", "Front: R = " + colorSensorFront.red() + ", G = " + colorSensorFront.green() + ", B = " + colorSensorFront.blue() + ", A = " +  colorSensorFront.alpha());
-                telemetry.addData ("8", "Y,P,R,FH: " + yprf);
+                telemetry.addData("4", "Down: R = " + colorSensorDown.red() + ", G = " + colorSensorDown.green() + ", B = " + colorSensorDown.blue() + ", A = " +  colorSensorDown.alpha());
+                telemetry.addData("5", "Front: R = " + colorSensorFront.red() + ", G = " + colorSensorFront.green() + ", B = " + colorSensorFront.blue() + ", A = " +  colorSensorFront.alpha());
+                telemetry.addData ("6", "Y,P,R,FH: " + yprf);
 
                 //waitOneFullHardwareCycle();
             }
@@ -391,28 +328,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         DbgLog.msg("USER MESSAGE (short): " + toWrite);
         DbgLog.error("USER MESSAGE (short): " + toWrite);
     }
-/*
-    public void setCustomSkin() //maybe transfer this sort of app modification stuff to ftcrobotcontrolleractivity. It might be more appropriate there.
-    {
-        View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(R.id.scanButton);
-        relativeLayout.setBackgroundColor(Color.CYAN);
-        View button1 = ((Activity) hardwareMap.appContext).findViewById(R.id.file_activate_button); //try different button if this doesn't work.
-        View.OnLongClickListener listener = new View.OnLongClickListener()
-        {
-            public int numPresses = 0;
-            public boolean onLongClick(View v)
-            {
-                telemetry.addData("4", "Button clicks: " + numPresses++);
-                return false;
-            }
-        };
-        button1.setOnLongClickListener(listener);
-        View entireScreen = ((Activity) hardwareMap.appContext).findViewById(R.id.entire_screen); //try different button if this doesn't work.
-        View button2 = ((Activity) hardwareMap.appContext).findViewById(R.id.textWifiDirectStatus); //try different button if this doesn't work.
-        //button2.setOnLongClickListener(); //maybe put new teleOp thing here.
-        //try adding a new listener to the buttons to make them do different things.
-    }
-*/
+
     public ProgramType getProgramType () //override in any meaningful subclass
     {
         return ProgramType.UNDECIDED;
@@ -570,11 +486,6 @@ public abstract class OpMode_5220 extends LinearOpMode
     public int getEncoderValue (DcMotor dcm)
     {
         return (dcm.getCurrentPosition() - driveMotorInitValues[motorToNumber(dcm)]);
-    }
-
-    public int getSlidePosition ()
-    {
-        return slideMotor.getCurrentPosition() - slideInit;
     }
 
     public int motorToNumber (DcMotor dcm)
@@ -1072,6 +983,17 @@ public abstract class OpMode_5220 extends LinearOpMode
         sleep(99); //maybe reduce this if it wastes too much time to have this safety interval.
     }
 
+    public final void strafeTime(int time, double power)
+    {
+        writeToLog("Strafing at " + power + " power for " + time + " ms");
+        setStrafePower(power);
+        sleep(time);
+        stopDrivetrain();
+        if (!runConditions()) return;
+        waitFullCycle();
+        //stopDrivetrain();
+    }
+
     //ROTATION:
 
     public final void setTurnPower (double power) //problm with this?
@@ -1356,149 +1278,6 @@ public abstract class OpMode_5220 extends LinearOpMode
     public final void shoot ()
     {
         //shoot a ball
-    }
-
-    public static final double DUMPER_UP = 1.0;
-    public static final double DUMPER_DOWN = 0.1;
-    public static final double dumperHeight = 0.47;
-
-    public final void moveDumper (boolean b)
-    {
-        moveDumper(b == UP ? DUMPER_UP : DUMPER_DOWN);
-    }
-
-    public final void moveDumper (double d)
-    {
-        leftDumpServo.setPosition(d);
-        rightDumpServo.setPosition(1.0 - d);
-    }
-
-    public static final double COLLECT = SWIVEL_INIT;
-    public static final double BLUE_HIGH = 0.863;
-    public static final double BLUE_MEDIUM = 0.882;
-    public static final double RED_HIGH = 0.66666;
-    public static final double RED_MEDIUM = 0.635;
-
-    public final void moveSwivel (double position)
-    {
-        swivelServo.setPosition(position);
-    }
-
-    public static final double leftWallInit = 0.48;
-    public static final double rightWallInit = 0.5;
-    public static final double wallOffset = 0.335;
-
-    public final void moveWall (boolean position)
-    {
-        if (position == UP)
-        {
-            leftWallServo.setPosition(leftWallInit + wallOffset);
-            rightWallServo.setPosition(rightWallInit - wallOffset);
-        }
-
-        else if (position == DOWN)
-        {
-            leftWallServo.setPosition(leftWallInit);
-            rightWallServo.setPosition(rightWallInit);
-        }
-    }
-    
-    public final void setSweeperPower (double power)
-    {
-        sweeperMotor1.setPower(power);
-        sweeperMotor2.setPower(power);
-    }
-
-    public final void setLiftPower (double power)
-    {
-        liftMotor1.setPower(power);
-        liftMotor2.setPower(-power);
-    }
-
-    public final void setHookPosition(double position)
-    {
-        hookServo.setPosition(position);
-    }
-
-    public final void setHookPosition(boolean position)
-    {
-        setHookPosition(position == UP ? 0.0 : 1.0);
-    }
-
-    public final void setHookAdjustPosition (double position)
-    {
-        leftHookAdjustServo.setPosition(LEFT_HOOK_ADJUST_INIT - position);
-        rightHookAdjustServo.setPosition(RIGHT_HOOK_ADJUST_INIT + position);
-    }
-
-    public final void moveSlides (int position)
-    {
-        if (getSlidePosition() < position)
-        {
-            slideMotor.setPower(1.0);
-            while (runConditions() && getSlidePosition() < position)
-            {
-
-            }
-        }
-
-        if (getSlidePosition() > position)
-        {
-            slideMotor.setPower(-1.0);
-            while (runConditions() && getSlidePosition() > position)
-            {
-
-            }
-        }
-
-        slideMotor.setPower(0);
-        waitFullCycle();
-        slideMotor.setPower(0);
-        waitFullCycle();
-    }
-
-    public final void releasePin()
-    {
-        releaseServo.setPosition(1.0);
-    }
-
-    public void flingClimbers ()
-    {
-        if (!runConditions()) return;
-        sleep (200);
-       // writeToLog ("Flinging Climbers.");
-        Stopwatch climberTimer = new Stopwatch();
-        double timeInMillis = CLIMBER_FLING_TIME * 1000.0;
-        while (runConditions() && climberTimer.time() < timeInMillis)
-        {
-            double newPosition = (climberTimer.time() / timeInMillis);
-            if (newPosition > 1) newPosition = 1;
-            moveDumper (newPosition);
-            //waitFullCycle(); //not sure if needed here
-        }
-        sleep (1000);
-        moveDumper(DOWN);
-       // writeToLog("Climber flinging is done.");
-
-    }
-
-    public void hookAdjustRelease ()
-    {
-        if (!runConditions()) return;
-        Stopwatch timer = new Stopwatch();
-        double timeInMillis = HOOK_ADJUST_RELEASE_TIME * 1000.0;
-        waitFullCycle();
-        while (runConditions() && timer.time() < timeInMillis)
-        {
-            double newPosition = (timer.time() / timeInMillis) * HOOK_ADJUST_RELEASE_DISTANCE;
-            if (newPosition > HOOK_ADJUST_RELEASE_DISTANCE) newPosition = HOOK_ADJUST_RELEASE_DISTANCE;
-            setHookAdjustPosition (newPosition);
-            waitNextCycle();
-        }
-        sleep (1000);
-        waitNextCycle();
-        setHookAdjustPosition(0);
-        waitFullCycle();
     }
 
     public double getFloorBrightness ()
