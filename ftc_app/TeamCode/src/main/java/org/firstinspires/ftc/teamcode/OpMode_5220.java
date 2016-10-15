@@ -82,8 +82,8 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final double ENCODER = 3;
     protected static final double GYRO = 4;
 
-    protected static final double WHEEL_DIAMETER = 6.0; //in inches
-    protected static final double GEAR_RATIO = 3.0 / 4.0;
+    protected static final double WHEEL_DIAMETER = 4.0; //in inches
+    protected static final double GEAR_RATIO = 1.0;
     protected static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     protected static final int ENCODER_COUNTS_PER_ROTATION = 1120; //WAS 1440
 
@@ -126,11 +126,13 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected DcMotor rightFrontMotor;
     protected DcMotor leftBackMotor;
     protected DcMotor rightBackMotor;
+    protected DcMotor shooterMotor;
 
     protected DcMotor[] driveMotors = new DcMotor[4];
     protected int[] driveMotorInitValues = new int[4];
 
     protected Servo swivelServo;
+    protected Servo shooterTiltServo;
 
     protected double swivelServoInit;
 
@@ -180,7 +182,10 @@ public abstract class OpMode_5220 extends LinearOpMode
         driveMotors[2] = leftBackMotor;
         driveMotors[3] = rightBackMotor;
 
-        //swivelServo = hardwareMap.servo.get("sServo");
+        shooterMotor = hardwareMap.dcMotor.get("shooter");
+
+       // swivelServo = hardwareMap.servo.get("sServo");
+        shooterTiltServo = hardwareMap.servo.get("stServo");
 
 /*
         colorSensorDown = hardwareMap.colorSensor.get("cSensor1");
@@ -203,7 +208,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     public void initialize()
     {
         //swivelServo.setPosition(SWIVEL_INIT);
-
+        shooterTiltServo.setPosition(0.5);
         waitFullCycle();
 /*
         gyroSensor.calibrate();
@@ -238,6 +243,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         initialize();
 
         telemetry.addData("1", "Ready to run.");
+        telemetry.update();
 
         waitForStart();
 
@@ -295,21 +301,25 @@ public abstract class OpMode_5220 extends LinearOpMode
             debugLoopOn = true;
             while (debugLoopOn && opModeIsActive())
             {
+                /*
                 yaw = df.format(navX.getYaw());
                 pitch = df.format(navX.getPitch());
                 roll = df.format(navX.getRoll());
                 fh = df.format(navX.getFusedHeading());
                 yprf = yaw + ", " + pitch + ", " + roll + ", " + fh;
-
+*/
                 telemetry.addData("1", "Time Elapsed:" + gameTimer.time());
 
                 telemetry.addData("2", "LFM: " + leftFrontMotor.getCurrentPosition() + ", RFM: " + rightFrontMotor.getCurrentPosition());
                 telemetry.addData("3", "LBM: " + leftBackMotor.getCurrentPosition() + ", RBM: " + rightBackMotor.getCurrentPosition());
+                /*
                 telemetry.addData("4", "Down: R = " + colorSensorDown.red() + ", G = " + colorSensorDown.green() + ", B = " + colorSensorDown.blue() + ", A = " +  colorSensorDown.alpha());
                 telemetry.addData("5", "Front: R = " + colorSensorFront.red() + ", G = " + colorSensorFront.green() + ", B = " + colorSensorFront.blue() + ", A = " +  colorSensorFront.alpha());
                 telemetry.addData ("6", "Y,P,R,FH: " + yprf);
+                */
 
                 //waitOneFullHardwareCycle();
+                telemetry.update();
             }
         }
     }
@@ -364,7 +374,7 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     public int distanceToStrafeEncoderCount (double distance) //THIS CANNOT BE DONE BY MATH. THIS CONVERSION FACTOR MUST BE DETERMINED EMPIRICALLY.
     {
-        return ((int) (distance * ((double)ENCODER_COUNTS_PER_ROTATION / 4.5))); //TEMPORARY STAND-IN UNTIL WE ACTUALLY FIGURE OUT THE CONVERSION RATIO. This guesstimate assumes that one rotation of the wheels moves the robot 4.5 inches sideways.
+        return ((int) (distance * ((double)ENCODER_COUNTS_PER_ROTATION / 13.7))); //TEMPORARY STAND-IN UNTIL WE ACTUALLY FIGURE OUT THE CONVERSION RATIO. This guesstimate assumes that one rotation of the wheels moves the robot 4.5 inches sideways.
     }
 
     public void sleep(int millis) //change back to old way if the new way doesn't work
@@ -455,7 +465,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         setRightDrivePower(power);
     }
 
-    void setStrafePower (double power)
+    public void setStrafePower (double power)
     {
         setMotorPower (leftFrontMotor, power);
         setMotorPower (rightFrontMotor, -power);
@@ -545,7 +555,7 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     public final int getSideEncoderAverage (boolean side)
     {
-        if (side == RIGHT) return getEncoderValue(rightBackMotor);
+        //if (side == RIGHT) return getEncoderValue(rightBackMotor);
         int addon = (side == RIGHT ? 1 : 0);
         int sum = getEncoderValue(driveMotors[0 + addon]) + getEncoderValue(driveMotors[2 + addon]);
         int average = (int) (1.0 * sum / 2.0);
@@ -688,7 +698,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         int encoderCount = distanceToEncoderCount(distance);
         writeToLog("MOVING: Distance = " + distance + ", Encoder Count = " + encoderCount + ", Mode = " + getModeText(mode) + ", Power = " + power);
         writeToLog("MOVING: UnReset encoder values are LFM: " + getEncoderValue(leftFrontMotor) + ", " + getEncoderValue(rightFrontMotor));
-        navX.zeroYaw();
+        //navX.zeroYaw();
 
         double powerChange = 0;
         double updateTime = ((mode == ENCODER) ? ENCODER_SYNC_UPDATE_TIME : GYRO_SYNC_UPDATE_TIME);
@@ -752,7 +762,7 @@ public abstract class OpMode_5220 extends LinearOpMode
                         break;
                     }
                 }
-                if (i == 0) writeToLog("IMU YAW: " + navX.getYaw());
+                //if (i == 0) writeToLog("IMU YAW: " + navX.getYaw());
                 i++;
             }
 
@@ -900,7 +910,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         int encoderCount = distanceToStrafeEncoderCount(distance);
         writeToLog("STRAFING: Distance = " + distance + ", Encoder Count = " + encoderCount + ", Mode = " + getModeText(mode) + ", Power = " + power);
         writeToLog("STRAFING: UnReset encoder values are LFM: " + getEncoderValue(leftFrontMotor) + ", " + getEncoderValue(rightFrontMotor));
-        navX.zeroYaw();
+        //navX.zeroYaw();
 
         double powerChange = 0;
         double updateTime = ((mode == ENCODER) ? ENCODER_SYNC_UPDATE_TIME : GYRO_SYNC_UPDATE_TIME);

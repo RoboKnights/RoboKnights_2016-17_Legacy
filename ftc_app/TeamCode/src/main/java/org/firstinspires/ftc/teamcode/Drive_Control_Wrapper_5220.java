@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Qualcomm Technologies Inc
+/* Copyright (c) 2014 Qualcomm Technologies Inc
 
 All rights reserved.
 
@@ -31,55 +31,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.teamcode;
 
-/*
-
-TODO:
-
-Add option to (try to) dump blocks in low goal before climbing ramp on our side
-Add option to try to drive to other side of field (make sure its allowed), climb up the ramp of our color there, and position for scoring in the medium goal. probably terminate if gyro reads too much directional change.
-Add ultrasonic sensor when we add rescue beacon detection?
-*/
-
-//Hello world.
-
-//NOTE: Do NOT put waitFullCycle in loops. Only put in between other stuff
-
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "CheckOpMode 5220", group = "Tools")
-//@Disabled
-public class Check_OpMode extends OpMode_5220
+public class Drive_Control_Wrapper_5220
 {
-    public ProgramType getProgramType ()
+    public abstract class Drive_Control_Base extends OpMode_5220
     {
-        return ProgramType.TELEOP;
-    }
-
-    public void initialize () //override
-    {
-        super.initialize(); //do everything in the original, common initialization.
-        waitFullCycle();
-        colorSensorDown.enableLed(true);
-        waitFullCycle();
-        colorSensorFront.enableLed(false);
-    }
-    public void main ()
-    {
-        new DebuggerDisplayLoop().start();
-
-        colorSensorDown.enableLed(true);
-        waitFullCycle();
-        colorSensorDown.enableLed(true);
-        waitFullCycle();
-        colorSensorFront.enableLed(false);
-        waitFullCycle();
-        colorSensorFront.enableLed(false);
-        waitFullCycle();
-
-        while (opModeIsActive())
+        public void initialize ()
         {
-            waitNextCycle();
+            super.initialize();
+        }
+
+        public abstract void startMoving();
+
+        public void main ()
+        {
+            startMoving();
+            writeToLog("Started moving");
+            while (runConditions()) ;
+            stopDrivetrain();
+        }
+    }
+
+
+    public class DriveForwards extends Drive_Control_Base
+    {
+        public DriveForwards(){};
+
+        public void startMoving ()
+        {
+            setDrivePower(1.0);
         }
     }
 }

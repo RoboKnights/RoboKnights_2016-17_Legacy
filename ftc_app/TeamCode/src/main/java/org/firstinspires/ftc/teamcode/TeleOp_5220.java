@@ -382,6 +382,9 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                     sleep (20);
                 }
 
+            if (gamepad1.a) setMotorPower(shooterMotor, -1.0);
+            else setMotorPower(shooterMotor, 0.0);
+
             //PREVIOUS VALUE SETTINGS
 
             prevTopHatUp1 = gamepad1.dpad_up;
@@ -429,14 +432,16 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
 
     public void main ()
     {
+
         new DebuggerDisplayLoop().start();
         //for (DcMotor dcm: driveMotors) dcm.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        /*
         waitFullCycle();
         colorSensorFront.enableLed(true);
         waitFullCycle();
         colorSensorDown.enableLed(true);
         waitFullCycle();
-
+*.*/
         while (runConditions())
         {
             try

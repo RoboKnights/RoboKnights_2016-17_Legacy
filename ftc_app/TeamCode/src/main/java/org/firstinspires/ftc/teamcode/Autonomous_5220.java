@@ -42,7 +42,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 
 //NOTE: Do NOT put waitFullCycle in loops. Only put in between other stuff
 
-@Autonomous(name = "Autonomous 5220", group = "Main")
+@TeleOp(name = "Autonomous 5220", group = "Main")
 //@Disabled
 public class Autonomous_5220 extends OpMode_5220
 {
@@ -281,7 +281,14 @@ public class Autonomous_5220 extends OpMode_5220
 
     public void test() //for debug, whenever we want to test something independent of the rest of the autonomous program
     {
-        move (20);
+        for (int i = 0; i < 5; i++)
+        {
+            move(24, ENCODER);
+            strafe (24);
+            move(-24, ENCODER);
+            strafe (-24);
+        }
+        while (runConditions());
     }
 
     public void autonomous ()
@@ -532,7 +539,7 @@ public class Autonomous_5220 extends OpMode_5220
         new DebuggerDisplayLoop().start();
         waitFullCycle();
 
-        navX.zeroYaw();
+        //navX.zeroYaw();
         waitFullCycle();
 /*
         lineBlockedTime = lineBlockedTime + startWaitTime; //intentionally disabling this stall detection for now
@@ -551,7 +558,7 @@ public class Autonomous_5220 extends OpMode_5220
         }
 
         lineBlockedTime = 2750000; //really big number just for debug
-       // test();
-        autonomous();
+       test();
+        //autonomous();
     }
 }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Qualcomm Technologies Inc
+/* Copyright (c) 2014 Qualcomm Technologies Inc
 
 All rights reserved.
 
@@ -29,57 +29,26 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package org.firstinspires.ftc.teamcode;
-
-/*
-
-TODO:
-
-Add option to (try to) dump blocks in low goal before climbing ramp on our side
-Add option to try to drive to other side of field (make sure its allowed), climb up the ramp of our color there, and position for scoring in the medium goal. probably terminate if gyro reads too much directional change.
-Add ultrasonic sensor when we add rescue beacon detection?
-*/
-
-//Hello world.
-
-//NOTE: Do NOT put waitFullCycle in loops. Only put in between other stuff
-
+package org.firstinspires.ftc.teamcode.drivecontrol;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "CheckOpMode 5220", group = "Tools")
+import org.firstinspires.ftc.teamcode.OpMode_5220;
+
+@Autonomous(name = "Rotate_Right", group = "Drive Control")
 //@Disabled
-public class Check_OpMode extends OpMode_5220
+public class Rotate_Right extends OpMode_5220
 {
-    public ProgramType getProgramType ()
+
+    public void initialize ()
     {
-        return ProgramType.TELEOP;
+        super.initialize();
     }
 
-    public void initialize () //override
+	public void main ()
     {
-        super.initialize(); //do everything in the original, common initialization.
-        waitFullCycle();
-        colorSensorDown.enableLed(true);
-        waitFullCycle();
-        colorSensorFront.enableLed(false);
-    }
-    public void main ()
-    {
-        new DebuggerDisplayLoop().start();
-
-        colorSensorDown.enableLed(true);
-        waitFullCycle();
-        colorSensorDown.enableLed(true);
-        waitFullCycle();
-        colorSensorFront.enableLed(false);
-        waitFullCycle();
-        colorSensorFront.enableLed(false);
-        waitFullCycle();
-
-        while (opModeIsActive())
-        {
-            waitNextCycle();
-        }
+        setTurnPower(1.0);
+        while (runConditions());
+        stopDrivetrain();
     }
 }
