@@ -382,8 +382,11 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                     sleep (20);
                 }
 
-            if (gamepad1.a) setMotorPower(shooterMotor, -1.0);
+            if (gamepad1.a) setMotorPower(shooterMotor, 1.0);
             else setMotorPower(shooterMotor, 0.0);
+
+            if (gamepad1.b && (!prevB1)) shootMulti();
+            if (gamepad1.y && (!prevGamepad1.y)) shootMulti(); //if this prevGamepad thing works then all the individual previous value variables can be eliminated.
 
             //PREVIOUS VALUE SETTINGS
 

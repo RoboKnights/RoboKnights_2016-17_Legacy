@@ -183,6 +183,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         driveMotors[3] = rightBackMotor;
 
         shooterMotor = hardwareMap.dcMotor.get("shooter");
+        shooterMotor.setDirection(DcMotor.Direction.REVERSE);
 
        // swivelServo = hardwareMap.servo.get("sServo");
         shooterTiltServo = hardwareMap.servo.get("stServo");
@@ -208,6 +209,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     public void initialize()
     {
         //swivelServo.setPosition(SWIVEL_INIT);
+        shooterInit = getEncoderValue(shooterMotor);
         shooterTiltServo.setPosition(0.5);
         waitFullCycle();
 /*
@@ -1285,10 +1287,76 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     //ATTACHMENTS:
 
+    protected int shooterTarget = 0;
+    protected int shooterOffset = 0;
+    protected int shooterInit = 0;
+
+
+    protected boolean shooterChanged = false;
+    protected int shooterState = SHOOTER_READY;
+    public static final int SHOOTER_READY = 0, SHOOTER_ACTIVE = 1, SHOOTER_SETUP = 2;
+
+    public final int shooterPosition ()
+    {
+        return (getEncoderValue(shooterMotor) - shooterInit);
+    }
+
     public final void shoot ()
     {
-        //shoot a ball
+        if (shooterState != SHOOTER_READY) return;
+
+        if (shooterChanged)
+        {
+            shooterInit = getEncoderValue(shooterMotor);
+            shooterTarget = ENCODER_COUNTS_PER_ROTATION;
+            shooterChanged = false;
+        }
+/*
+        else if (nMotorEncoder[shooter] >= (14400))
+        {
+            offset = nMotorEncoder[shooter] - target;
+            nMotorEncoder[shooter] = 0;
+            target = 2880 - offset;
+        }
+*/
+        else
+        {
+            shooterTarget += ENCODER_COUNTS_PER_ROTATION;
+        }
+
+        int currentStart = shooterPosition();
+
+        setMotorPower(shooterMotor, 1.0);
+        shooterState = SHOOTER_ACTIVE;
+
+        while (runConditions() && shooterPosition() < shooterTarget)
+        {
+            if (shooterState == SHOOTER_ACTIVE && shooterPosition() > currentStart + (ENCODER_COUNTS_PER_ROTATION / 2)) //if the shooter has already shot the ball but is still resetting
+            {
+                shooterState = SHOOTER_SETUP;
+            }
+        }
+
+        waitFullCycle();
+        setMotorPower(shooterMotor, 0);
+        sleep(50);
+        shooterState = SHOOTER_READY;
+        waitFullCycle();
     }
+
+    private final class ShooterThread extends Thread
+    {
+        public void run ()
+        {
+            shoot();
+        }
+    }
+    public final void shootMulti ()
+    {
+        new ShooterThread().start();
+    }
+
+
 
     public double getFloorBrightness ()
     {
