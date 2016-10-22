@@ -44,6 +44,16 @@ import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.util.*;
 
 import com.kauailabs.navx.ftc.AHRS;
+import com.vuforia.HINT;
+import com.vuforia.Vuforia;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -160,6 +170,9 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected boolean debugLoopOn = false;
     protected Stopwatch gameTimer;
     protected int phase = HAS_NOT_STARTED;
+
+    protected VuforiaLocalizer vuforia;
+    protected VuforiaTrackables beacons;
 
     protected MediaPlayer mediaPlayer;
     public static final boolean MUSIC_ON = true;
@@ -1443,4 +1456,42 @@ public abstract class OpMode_5220 extends LinearOpMode
         mediaPlayer = null;
     }
     */
+
+    public void initializeVuforia(){
+        VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
+        params.vuforiaLicenseKey = "AcjcUvP/////AAAAGZk8Oo2BiUH4lYtmypMLxPoh5M3gwDE8WJsu13qi2h2KT3hWI+28EgFYToXpq7lUI/2xGSArueKvAzg4" +
+                "+kgBe7jXAtv7l8U1v1wxVvVbrFXRuEBwUPYPNkqUPZeD+xiVlRVqPObIoBHTYfS6i+PtGBKu+lpOGCi2eIuTvhEawydEF17lD24K8ip9cWuVVIw6LAzBjckFU" +
+                "soVgCsmnOdsgQjxJ8xRr3nmO+O88LYAMvG9x+rLcjFIF9u7K6Xx54JvAa9aa1b+55CtclWL1eK76YcIT8uabochFK8iZytmVKAwqfxIHasdokE12cTCwvY9m" +
+                "D5KBHdLjwKPj6sjqjAWjEzcAW9GcSj6YBGcJNZRB5pU";
+        params.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        params.cameraMonitorFeedback = VuforiaLocalizer.Parameters.CameraMonitorFeedback.AXES;
+
+        vuforia = ClassFactory.createVuforiaLocalizer(params);
+        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 4);
+
+        beacons = vuforia.loadTrackablesFromAsset("FTC_2016-17");
+
+        beacons.get(0).setName("Wheels");
+        beacons.get(1).setName("Tools");
+        beacons.get(2).setName("Lego");
+        beacons.get(3).setName("Gears");
+    }
+
+    public void trackBeacons(){
+        beacons.activate();
+        for(VuforiaTrackable beac : beacons) {
+            OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) beac.getListener()).getPose();
+
+            if(pose != null) {
+                VectorF translation = pose.getTranslation();
+
+                telemetry.addData(beac.getName() + "-Translation", translation);
+
+                double degreesToTurn = Math.toDegrees(Math.atan2(translation.get(1), translation.get(2)));
+
+                telemetry.addData(beac.getName() + "-Degrees", degreesToTurn);
+            }
+        }
+        telemetry.update();
+    }
 }
