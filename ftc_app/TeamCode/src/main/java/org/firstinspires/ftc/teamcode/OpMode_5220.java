@@ -117,6 +117,9 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     protected static final double LINE_WHITE_THRESHOLD = 50;
 
+    protected static final double DOOR_OPEN = 0.1;
+    protected static final double DOOR_CLOSED = 0.7;
+
     //MOTORS AND SERVOS:
 
     protected static final String[] motorNames = {}; //Fill this in later.
@@ -127,12 +130,14 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected DcMotor leftBackMotor;
     protected DcMotor rightBackMotor;
     protected DcMotor shooterMotor;
+    protected DcMotor sweeperMotor;
 
     protected DcMotor[] driveMotors = new DcMotor[4];
     protected int[] driveMotorInitValues = new int[4];
 
     protected Servo swivelServo;
     protected Servo shooterTiltServo;
+    protected Servo doorServo;
 
     protected double swivelServoInit;
 
@@ -184,9 +189,13 @@ public abstract class OpMode_5220 extends LinearOpMode
 
         shooterMotor = hardwareMap.dcMotor.get("shooter");
         shooterMotor.setDirection(DcMotor.Direction.REVERSE);
+        sweeperMotor = hardwareMap.dcMotor.get("sweeper");
+        sweeperMotor.setDirection(DcMotor.Direction.FORWARD);
 
        // swivelServo = hardwareMap.servo.get("sServo");
+
         shooterTiltServo = hardwareMap.servo.get("stServo");
+        doorServo = hardwareMap.servo.get ("dServo");
 
 /*
         colorSensorDown = hardwareMap.colorSensor.get("cSensor1");
@@ -211,6 +220,8 @@ public abstract class OpMode_5220 extends LinearOpMode
         //swivelServo.setPosition(SWIVEL_INIT);
         shooterInit = getEncoderValue(shooterMotor);
         shooterTiltServo.setPosition(0.5);
+        moveDoor (DOOR_CLOSED);
+
         waitFullCycle();
 /*
         gyroSensor.calibrate();
@@ -314,6 +325,7 @@ public abstract class OpMode_5220 extends LinearOpMode
 
                 telemetry.addData("2", "LFM: " + leftFrontMotor.getCurrentPosition() + ", RFM: " + rightFrontMotor.getCurrentPosition());
                 telemetry.addData("3", "LBM: " + leftBackMotor.getCurrentPosition() + ", RBM: " + rightBackMotor.getCurrentPosition());
+                telemetry.addData("4", "Shooter: " + shooterPosition());
                 /*
                 telemetry.addData("4", "Down: R = " + colorSensorDown.red() + ", G = " + colorSensorDown.green() + ", B = " + colorSensorDown.blue() + ", A = " +  colorSensorDown.alpha());
                 telemetry.addData("5", "Front: R = " + colorSensorFront.red() + ", G = " + colorSensorFront.green() + ", B = " + colorSensorFront.blue() + ", A = " +  colorSensorFront.alpha());
@@ -497,7 +509,8 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     public int getEncoderValue (DcMotor dcm)
     {
-        return (dcm.getCurrentPosition() - driveMotorInitValues[motorToNumber(dcm)]);
+        if (motorToNumber(dcm) < 0) return dcm.getCurrentPosition();
+        else return (dcm.getCurrentPosition() - driveMotorInitValues[motorToNumber(dcm)]);
     }
 
     public int motorToNumber (DcMotor dcm)
@@ -1287,9 +1300,26 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     //ATTACHMENTS:
 
+    public final void moveDoor(double position)
+    {
+        doorServo.setPosition(position);
+    }
+
+    public final void setSweeperPower (double power)
+    {
+        setMotorPower(sweeperMotor, power);
+    }
+
+    public final boolean isBallLoaded () //use sensor soon
+    {
+        return true;
+    }
+
     protected int shooterTarget = 0;
     protected int shooterOffset = 0;
     protected int shooterInit = 0;
+
+    public static final int ENCODER_COUNTS_PER_ROTATION_NR60 = (ENCODER_COUNTS_PER_ROTATION * 3) / 2;
 
 
     protected boolean shooterChanged = false;
@@ -1308,7 +1338,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         if (shooterChanged)
         {
             shooterInit = getEncoderValue(shooterMotor);
-            shooterTarget = ENCODER_COUNTS_PER_ROTATION;
+            shooterTarget = ENCODER_COUNTS_PER_ROTATION_NR60;
             shooterChanged = false;
         }
 /*
@@ -1321,21 +1351,23 @@ public abstract class OpMode_5220 extends LinearOpMode
 */
         else
         {
-            shooterTarget += ENCODER_COUNTS_PER_ROTATION;
+            shooterTarget += ENCODER_COUNTS_PER_ROTATION_NR60;
         }
 
         int currentStart = shooterPosition();
 
+        writeToLog("SHOOTING: currentStart = " + currentStart + ", target = " + shooterTarget);
         setMotorPower(shooterMotor, 1.0);
         shooterState = SHOOTER_ACTIVE;
 
         while (runConditions() && shooterPosition() < shooterTarget)
         {
-            if (shooterState == SHOOTER_ACTIVE && shooterPosition() > currentStart + (ENCODER_COUNTS_PER_ROTATION / 2)) //if the shooter has already shot the ball but is still resetting
+            if (shooterState == SHOOTER_ACTIVE && shooterPosition() > currentStart + (ENCODER_COUNTS_PER_ROTATION_NR60 / 2)) //if the shooter has already shot the ball but is still resetting
             {
                 shooterState = SHOOTER_SETUP;
             }
         }
+        writeToLog ("SHOT: final encoder value: " + shooterPosition());
 
         waitFullCycle();
         setMotorPower(shooterMotor, 0);
@@ -1344,7 +1376,9 @@ public abstract class OpMode_5220 extends LinearOpMode
         waitFullCycle();
     }
 
-    private final class ShooterThread extends Thread
+
+
+    private final class ShootThread extends Thread
     {
         public void run ()
         {
@@ -1353,9 +1387,39 @@ public abstract class OpMode_5220 extends LinearOpMode
     }
     public final void shootMulti ()
     {
-        new ShooterThread().start();
+        new ShootThread().start();
     }
 
+    public final void shootAll ()
+    {
+        while (runConditions())
+        {
+            moveDoor (DOOR_OPEN);
+            sleep(1000);
+            moveDoor(DOOR_CLOSED);
+            sleep (550);
+            setSweeperPower(1.0);
+            shootMulti();
+            sleep (1550);
+            setSweeperPower(0);
+            if (!isBallLoaded()) break;
+        }
+        shootingAll = false;
+    }
+
+    private final class ShootAllThread extends Thread
+    {
+        public void run ()
+        {
+            shootAll();
+        }
+    }
+    protected boolean shootingAll = false;
+    public final void shootAllMulti ()
+    {
+        shootingAll = true;
+        new ShootAllThread().start();
+    }
 
 
     public double getFloorBrightness ()

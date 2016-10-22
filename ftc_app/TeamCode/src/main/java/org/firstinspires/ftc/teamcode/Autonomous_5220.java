@@ -281,6 +281,8 @@ public class Autonomous_5220 extends OpMode_5220
 
     public void test() //for debug, whenever we want to test something independent of the rest of the autonomous program
     {
+        shootAll();
+        /*
         for (int i = 0; i < 5; i++)
         {
             move(24, ENCODER);
@@ -288,6 +290,7 @@ public class Autonomous_5220 extends OpMode_5220
             move(-24, ENCODER);
             strafe (-24);
         }
+        */
         while (runConditions());
     }
 
