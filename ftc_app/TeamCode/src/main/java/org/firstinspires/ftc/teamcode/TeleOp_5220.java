@@ -384,16 +384,20 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
 
             if (gamepad1.a) setMotorPower(shooterMotor, 1.0);
             else setMotorPower(shooterMotor, 0.0);
-
+/*
             if (gamepad1.x && (!prevB1)) shootMulti();
             if (gamepad1.y && (!prevGamepad1.y)) shootMulti(); //if this prevGamepad thing works then all the individual previous value variables can be eliminated.
-
+*/
             if (gamepad1.right_bumper) setSweeperPower(1.0);
             else if (gamepad1.right_trigger > 0.7) setSweeperPower(-1.0);
             else setSweeperPower(0);
 
             if (gamepad1.b && !prevGamepad1.b)
                 moveDoor(doorServo.getPosition() != DOOR_OPEN ? DOOR_OPEN : DOOR_CLOSED);
+
+            if (gamepad1.dpad_up) setMotorPower(liftMotor, 1.0);
+            else if (gamepad1.dpad_down) setMotorPower(liftMotor, -1.0);
+            else setMotorPower(liftMotor, 0);
 
             //PREVIOUS VALUE SETTINGS
 

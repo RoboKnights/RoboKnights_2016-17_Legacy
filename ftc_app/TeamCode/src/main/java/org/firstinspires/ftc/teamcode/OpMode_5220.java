@@ -141,6 +141,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected DcMotor rightBackMotor;
     protected DcMotor shooterMotor;
     protected DcMotor sweeperMotor;
+    protected DcMotor liftMotor;
 
     protected DcMotor[] driveMotors = new DcMotor[4];
     protected int[] driveMotorInitValues = new int[4];
@@ -192,8 +193,8 @@ public abstract class OpMode_5220 extends LinearOpMode
         leftBackMotor = hardwareMap.dcMotor.get("lb");
         rightBackMotor = hardwareMap.dcMotor.get("rb");
 
-        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
         driveMotors[0] = leftFrontMotor;
         driveMotors[1] = rightFrontMotor;
@@ -204,6 +205,8 @@ public abstract class OpMode_5220 extends LinearOpMode
         shooterMotor.setDirection(DcMotor.Direction.REVERSE);
         sweeperMotor = hardwareMap.dcMotor.get("sweeper");
         sweeperMotor.setDirection(DcMotor.Direction.FORWARD);
+        liftMotor = hardwareMap.dcMotor.get("lift");
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
        // swivelServo = hardwareMap.servo.get("sServo");
 
