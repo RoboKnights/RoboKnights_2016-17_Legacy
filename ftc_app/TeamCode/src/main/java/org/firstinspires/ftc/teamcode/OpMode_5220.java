@@ -127,8 +127,19 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     protected static final double LINE_WHITE_THRESHOLD = 50;
 
-    protected static final double DOOR_OPEN = 0.1;
-    protected static final double DOOR_CLOSED = 0.7;
+    protected static final double DOOR_OPEN = 0.0;
+    protected static final double DOOR_CLOSED = 1.0;
+
+    protected static final double LIFT_TILT_BACKWARDS = 0.27;
+    protected static final double LIFT_TILT_FORWARDS = 0.523;
+
+    protected static final double RP_IN = 0.0;
+    protected static final double RP_OUT = 0.7;
+
+    protected static final double ST_1 = 0.0;
+    protected static final double ST_2 = 0.1;
+    protected static final double[] SHOOTER_TILT = {0.0, 0.1, 0.2, 1.0};
+    protected int currentShooterPreset = 0;
 
     //MOTORS AND SERVOS:
 
@@ -141,6 +152,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected DcMotor rightBackMotor;
     protected DcMotor shooterMotor;
     protected DcMotor sweeperMotor;
+    protected DcMotor sweeperMotor2;
     protected DcMotor liftMotor;
 
     protected DcMotor[] driveMotors = new DcMotor[4];
@@ -149,6 +161,8 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected Servo swivelServo;
     protected Servo shooterTiltServo;
     protected Servo doorServo;
+    protected Servo autoExtendServo;
+    protected Servo liftTiltServo;
 
     protected double swivelServoInit;
 
@@ -203,15 +217,19 @@ public abstract class OpMode_5220 extends LinearOpMode
 
         shooterMotor = hardwareMap.dcMotor.get("shooter");
         shooterMotor.setDirection(DcMotor.Direction.REVERSE);
-        sweeperMotor = hardwareMap.dcMotor.get("sweeper");
+        sweeperMotor = hardwareMap.dcMotor.get("sweeper1");
         sweeperMotor.setDirection(DcMotor.Direction.FORWARD);
+        sweeperMotor2 = hardwareMap.dcMotor.get("sweeper2");
+        sweeperMotor2.setDirection(DcMotor.Direction.FORWARD);
         liftMotor = hardwareMap.dcMotor.get("lift");
         liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
        // swivelServo = hardwareMap.servo.get("sServo");
 
-        shooterTiltServo = hardwareMap.servo.get("stServo");
+        shooterTiltServo = hardwareMap.servo.get("trServo");
         doorServo = hardwareMap.servo.get ("dServo");
+        autoExtendServo = hardwareMap.servo.get("rpServo");
+        liftTiltServo = hardwareMap.servo.get ("ltServo");
 
 /*
         colorSensorDown = hardwareMap.colorSensor.get("cSensor1");
@@ -235,7 +253,9 @@ public abstract class OpMode_5220 extends LinearOpMode
     {
         //swivelServo.setPosition(SWIVEL_INIT);
         shooterInit = getEncoderValue(shooterMotor);
-        shooterTiltServo.setPosition(0.5);
+        setShooterPreset(0);
+        moveLiftTiltServo(LIFT_TILT_BACKWARDS);
+        moveRackAndPinion(RP_IN);
         moveDoor (DOOR_CLOSED);
 
         waitFullCycle();
@@ -1324,6 +1344,29 @@ public abstract class OpMode_5220 extends LinearOpMode
     public final void setSweeperPower (double power)
     {
         setMotorPower(sweeperMotor, power);
+        setMotorPower(sweeperMotor2, power);
+    }
+
+    public final void moveRackAndPinion (double position)
+    {
+        autoExtendServo.setPosition(position);
+    }
+
+    public final void moveLiftTiltServo (double position)
+    {
+        liftTiltServo.setPosition(position);
+    }
+
+    public final void moveShooterTiltServo (double position)
+    {
+        shooterTiltServo.setPosition(position);
+    }
+
+    public final void setShooterPreset (int preset)
+    {
+        if (preset < 0 || preset >= SHOOTER_TILT.length) return;
+        moveShooterTiltServo(SHOOTER_TILT[preset]);
+        currentShooterPreset = preset;
     }
 
     public final boolean isBallLoaded () //use sensor soon

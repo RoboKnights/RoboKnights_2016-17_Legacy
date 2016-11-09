@@ -33,6 +33,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "Demo 5220", group = "Main") //change to autonomous if making this called a teleop changes something for the worse
 //@Disabled
@@ -75,5 +76,19 @@ public class Demo_Drive_5220 extends OpMode //this is a comment. It is a long co
             rightMotor.setPower(rightY * 0.5);
             telemetry.addData("Mode:" , "Slow");
         }
+
+
+
+        /*double xValue = gamepad1.right_stick_x;
+        double yValue = gamepad1.right_stick_y;
+
+        double leftPower = yValue + xValue;
+        double rightPower = yValue - xValue;
+
+        leftPower = Range.clip(leftPower, -1, 1);
+        rightPower = Range.clip(rightPower, -1, 1);
+
+        leftMotor.setPower(leftPower);
+        rightMotor.setPower(rightPower); */
     }
 }

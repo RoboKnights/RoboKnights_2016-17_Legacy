@@ -395,10 +395,18 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
             if (gamepad1.b && !prevGamepad1.b)
                 moveDoor(doorServo.getPosition() != DOOR_OPEN ? DOOR_OPEN : DOOR_CLOSED);
 
+            if (gamepad1.y && !prevGamepad1.y)
+                moveRackAndPinion(autoExtendServo.getPosition() != RP_IN ? RP_IN : RP_OUT);
+
             if (gamepad1.dpad_up) setMotorPower(liftMotor, 1.0);
             else if (gamepad1.dpad_down) setMotorPower(liftMotor, -1.0);
             else setMotorPower(liftMotor, 0);
 
+            if (gamepad1.dpad_left) moveLiftTiltServo(LIFT_TILT_BACKWARDS);
+            else if (gamepad1.dpad_right) moveLiftTiltServo(LIFT_TILT_FORWARDS);
+
+            if (gamepad1.left_bumper && !prevGamepad1.left_bumper) setShooterPreset(currentShooterPreset + 1);
+            if (gamepad1.left_trigger > 0.7 && !(prevGamepad1.left_trigger > 0.7)) setShooterPreset(currentShooterPreset - 1);
             //PREVIOUS VALUE SETTINGS
 
             prevTopHatUp1 = gamepad1.dpad_up;
