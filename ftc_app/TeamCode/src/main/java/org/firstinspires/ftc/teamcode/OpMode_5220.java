@@ -138,7 +138,7 @@ public abstract class OpMode_5220 extends LinearOpMode
 
     protected static final double ST_1 = 0.0;
     protected static final double ST_2 = 0.1;
-    protected static final double[] SHOOTER_TILT = {0.0, 0.1, 0.2, 1.0};
+    protected static final double[] SHOOTER_TILT = {0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
     protected int currentShooterPreset = 0;
 
     //MOTORS AND SERVOS:
