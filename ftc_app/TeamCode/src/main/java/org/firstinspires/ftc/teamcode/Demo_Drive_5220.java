@@ -35,9 +35,9 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "Demo 5220", group = "Main") //change to autonomous if making this called a teleop changes something for the worse
-//@Disabled
-public class Demo_Drive_5220 extends OpMode //this is a comment. It is a long comment.
+@TeleOp(name = "Demo 5220", group = "Main")
+@Disabled
+public class Demo_Drive_5220 extends OpMode
 {
     private DcMotor leftMotor;
     private DcMotor rightMotor;
