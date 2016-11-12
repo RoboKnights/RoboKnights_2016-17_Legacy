@@ -407,6 +407,13 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
 
             if (gamepad1.left_bumper && !prevGamepad1.left_bumper) setShooterPreset(currentShooterPreset + 1);
             if (gamepad1.left_trigger > 0.7 && !(prevGamepad1.left_trigger > 0.7)) setShooterPreset(currentShooterPreset - 1);
+
+            //for debug
+            if (gamepad2.a) colorSensorDown.enableLed(true);
+            if (gamepad2.b) colorSensorDown.enableLed(false);
+            if (gamepad2.y) colorSensorFront.enableLed(true);
+            if (gamepad2.x) colorSensorFront.enableLed(false);
+
             //PREVIOUS VALUE SETTINGS
 
             prevTopHatUp1 = gamepad1.dpad_up;

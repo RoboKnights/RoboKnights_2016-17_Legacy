@@ -125,7 +125,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final double HOOK_ADJUST_RELEASE_TIME = 2.0;
     protected static final double HOOK_ADJUST_RELEASE_DISTANCE = 0.7;
 
-    protected static final double LINE_WHITE_THRESHOLD = 50;
+    protected static final double LINE_WHITE_THRESHOLD = 28;
 
     protected static final double DOOR_OPEN = 0.0;
     protected static final double DOOR_CLOSED = 1.0;
@@ -134,7 +134,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final double LIFT_TILT_FORWARDS = 0.523;
 
     protected static final double RP_IN = 0.0;
-    protected static final double RP_OUT = 0.7;
+    protected static final double RP_OUT = 0.15;
 
     protected static final double ST_1 = 0.0;
     protected static final double ST_2 = 0.1;
@@ -231,22 +231,22 @@ public abstract class OpMode_5220 extends LinearOpMode
         autoExtendServo = hardwareMap.servo.get("rpServo");
         liftTiltServo = hardwareMap.servo.get ("ltServo");
 
-/*
-        colorSensorDown = hardwareMap.colorSensor.get("cSensor1");
-        colorSensorFront = hardwareMap.colorSensor.get("cSensor2");
-        colorSensorFront.setI2cAddress(I2cAddr.create7bit(0x3E));//IF 7 BIT DOESN'T WORK TRY 8 BIT ADDRESS (I2cAddr.create8bit(0x3E)), OR USING I2CADDR CONSTRUCTOR
+
+        colorSensorDown = hardwareMap.colorSensor.get("cSensorD");
+        colorSensorFront = hardwareMap.colorSensor.get("cSensorF");
+        colorSensorDown.setI2cAddress(I2cAddr.create8bit(0x3E));//IF 7 BIT DOESN'T WORK TRY 8 BIT ADDRESS (I2cAddr.create8bit(0x3E)), OR USING I2CADDR CONSTRUCTOR
         // in hex, 0x3e = 62. deault address is 60 (reserved for colorSensorDown)
         colorSensorFront.enableLed(false);
-        colorSensorDown.enableLed(false);
-        gyroSensor = hardwareMap.gyroSensor.get("gSensor");
-        touchSensorFront = hardwareMap.touchSensor.get("tSensor1");
-        */
+        colorSensorDown.enableLed(true);
+        //gyroSensor = hardwareMap.gyroSensor.get("gSensor");
+        touchSensorFront = hardwareMap.touchSensor.get("tSensor");
 
-/*
-        navX = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("Device Interface Module 4"),
+
+
+        navX = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("Device Interface Module 3"),
                 NAVX_DIM_I2C_PORT,
                 AHRS.DeviceDataType.kProcessedData);
-                */
+
     }
 
     public void initialize()
@@ -269,12 +269,12 @@ public abstract class OpMode_5220 extends LinearOpMode
         gyroSensor.resetZAxisIntegrator();
         waitFullCycle();
 */
-        //navX.zeroYaw();
+        navX.zeroYaw();
 
         phase = INIT;
 
-        //writeToLog ("Down: " + colorSensorDown.getI2cAddress());
-        //writeToLog("Front: " + colorSensorFront.getI2cAddress());
+        writeToLog ("Down: " + colorSensorDown.getI2cAddress());
+        writeToLog("Front: " + colorSensorFront.getI2cAddress());
 
     }
 
@@ -350,23 +350,23 @@ public abstract class OpMode_5220 extends LinearOpMode
             debugLoopOn = true;
             while (debugLoopOn && opModeIsActive())
             {
-                /*
+
                 yaw = df.format(navX.getYaw());
                 pitch = df.format(navX.getPitch());
                 roll = df.format(navX.getRoll());
                 fh = df.format(navX.getFusedHeading());
                 yprf = yaw + ", " + pitch + ", " + roll + ", " + fh;
-*/
+
                 telemetry.addData("1", "Time Elapsed:" + gameTimer.time());
 
                 telemetry.addData("2", "LFM: " + leftFrontMotor.getCurrentPosition() + ", RFM: " + rightFrontMotor.getCurrentPosition());
                 telemetry.addData("3", "LBM: " + leftBackMotor.getCurrentPosition() + ", RBM: " + rightBackMotor.getCurrentPosition());
                 telemetry.addData("4", "Shooter: " + shooterPosition());
-                /*
-                telemetry.addData("4", "Down: R = " + colorSensorDown.red() + ", G = " + colorSensorDown.green() + ", B = " + colorSensorDown.blue() + ", A = " +  colorSensorDown.alpha());
-                telemetry.addData("5", "Front: R = " + colorSensorFront.red() + ", G = " + colorSensorFront.green() + ", B = " + colorSensorFront.blue() + ", A = " +  colorSensorFront.alpha());
-                telemetry.addData ("6", "Y,P,R,FH: " + yprf);
-                */
+
+                telemetry.addData("5", "Down: R = " + colorSensorDown.red() + ", G = " + colorSensorDown.green() + ", B = " + colorSensorDown.blue() + ", A = " +  colorSensorDown.alpha());
+                telemetry.addData("6", "Front: R = " + colorSensorFront.red() + ", G = " + colorSensorFront.green() + ", B = " + colorSensorFront.blue() + ", A = " +  colorSensorFront.alpha());
+                telemetry.addData ("7", "Y,P,R,FH: " + yprf);
+
 
                 //waitOneFullHardwareCycle();
                 telemetry.update();
@@ -1454,7 +1454,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         while (runConditions())
         {
             moveDoor (DOOR_OPEN);
-            sleep(1000);
+            sleep(1550);
             moveDoor(DOOR_CLOSED);
             sleep (550);
             setSweeperPower(1.0);

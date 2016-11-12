@@ -56,7 +56,7 @@ public class Autonomous_5220 extends OpMode_5220
 
     private Autonomous_5220 opMode = this;
 
-    private boolean color = RED; //arbitrary default
+    private boolean color = BLUE; //arbitrary default
     private int startPosition = START_RAMP;
     private int startWaitTime = 0; //in seconds, no need for non-integer numbers.
     private boolean firstBeacon = NEAR;
@@ -281,7 +281,9 @@ public class Autonomous_5220 extends OpMode_5220
 
     public void test() //for debug, whenever we want to test something independent of the rest of the autonomous program
     {
-        shootAll();
+        //move(-20, ENCODER);
+        //shoot();
+
         /*
         for (int i = 0; i < 5; i++)
         {
@@ -291,11 +293,36 @@ public class Autonomous_5220 extends OpMode_5220
             strafe (-24);
         }
         */
+
+        setShooterPreset(currentShooterPreset + 1);
+        move(-20, ENCODER);
+        sleep(500);
+
+        rotateEncoder(-8, 0.5);
+
+        //turnToLine(45);
         while (runConditions());
     }
 
     public void autonomous ()
     {
+        move (-5, 0.4);
+        rotateEncoder(3.5);
+        move(-64.8);
+        rotateEncoder(-3.5);
+        strafeTime(3000, -0.9);
+        sleep(2000);
+        strafe(2.7);
+        //moveRackAndPinion(RP_OUT);
+        sleep(2000);
+        while (colorSensorFront.blue() < 4) setDrivePower(0.2);
+        stopDrivetrain();
+        sleep(1500);
+        strafeTime(1500, -0.9);
+        strafe(3);
+        stopDrivetrain();
+
+        /*
         startToLine();
 
         followLineUntilTouch();
@@ -311,6 +338,7 @@ public class Autonomous_5220 extends OpMode_5220
         beaconToShootingPosition();
         shootAutonomousBalls();
         sleep(100);
+        */
     }
 
     private void startToLine ()
@@ -323,6 +351,19 @@ public class Autonomous_5220 extends OpMode_5220
             {
                 if(firstBeacon == NEAR)
                 {
+                    move (-5, 0.4);
+                    //shootAutonomousBalls();
+
+                    /*
+                    rotateEncoder(7.3);
+                    move (-32);
+                    driveToLine(-0.24);
+                    rotateEncoder(10);
+                    strafeToLine(0.3);
+                    strafe(-3);
+                    followLineUntilTouch();
+                    */
+
 
                 }
 
@@ -496,12 +537,34 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if (!runConditions()) return;
 
+
+        double proportionalConstant = 1.0 / 80.0;
+
         while (runConditions() && touchSensorFront.getValue() < 0.04)
         {
+            /*
+            double rp = -0.1;
+            double lp = -0.3;
+            rp += getFloorBrightness() * proportionalConstant;
+            rp = Math.max(0, lp);
+            rp = Math.min(1, lp);
+            setLeftDrivePower(lp);
+            setRightDrivePower(rp);
             //INSERT NEW BETTER LINE FOLLOWING ALGORITHM USING MECANUM WHEELS HERE
+            */
+            if (getFloorBrightness() >= LINE_WHITE_THRESHOLD)
+            {
+                setRightDrivePower(-0.3);
+                setLeftDrivePower(-0.08);
+            }
+
+            else
+            {
+                setLeftDrivePower(-0.3);
+                setRightDrivePower(-0.08);
+            }
         }
 
-        sleep(50);
         stopDrivetrain();
         moveTime(200, 0.32);
         stopDrivetrain();
@@ -561,7 +624,7 @@ public class Autonomous_5220 extends OpMode_5220
         }
 
         lineBlockedTime = 2750000; //really big number just for debug
-       test();
-        //autonomous();
+       //test();
+        autonomous();
     }
 }
