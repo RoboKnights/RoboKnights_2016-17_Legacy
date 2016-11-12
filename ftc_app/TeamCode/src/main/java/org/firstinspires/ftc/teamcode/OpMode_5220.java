@@ -1393,6 +1393,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     public final void shoot ()
     {
         if (shooterState != SHOOTER_READY) return;
+        shooterState = SHOOTER_ACTIVE;
 
         if (shooterChanged)
         {
@@ -1417,7 +1418,6 @@ public abstract class OpMode_5220 extends LinearOpMode
 
         writeToLog("SHOOTING: currentStart = " + currentStart + ", target = " + shooterTarget);
         setMotorPower(shooterMotor, 1.0);
-        shooterState = SHOOTER_ACTIVE;
 
         while (runConditions() && shooterPosition() < shooterTarget)
         {
