@@ -75,6 +75,10 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
     private boolean resetAutomationOn = false;
     private boolean scoringAutomationOn = false;
 
+    private static final boolean DPAD_LIFT = false;
+    private static final boolean DPAD_DRIVE = true;
+    private boolean dPadMode = DPAD_LIFT;
+
     public ProgramType getProgramType ()
     {
         return ProgramType.TELEOP;
@@ -108,6 +112,17 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
         Gamepad prevGamepad1 = new Gamepad(); //IF USING THESE GAMEPAD OBJECTS WORKS, REPLACE ALL THE INDIVIDUAL BOOLEANS BELOW WITH THEIR PREVGAMEPAD OBJECT COUNTERPARTS.
         Gamepad prevGamepad2 = new Gamepad();
 
+        try
+        {
+            prevGamepad1.copy(gamepad1);
+            prevGamepad2.copy(gamepad2);
+        }
+
+        catch (RobotCoreException rce)
+        {
+            writeToLog("prevGamepad Copying Error.");
+        }
+
 
         boolean prevTopHatUp1 = false; //maybe change these initialization if they mess something up
         boolean prevTopHatDown1 = false;
@@ -134,119 +149,10 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
 
         while (runConditions())
         {
-            //DRIVETRAIN CONTROL:
-/*
-            double throttle = (-(gamepad1.left_stick_y - g1Stick1Yinit));
-            double direction = (gamepad1.left_stick_x - g1Stick1Xinit);
-
-            if (reverseDriveOn)
-            {
-                throttle = -throttle;
-            }
-
-            double right = throttle - direction;
-            double left = throttle + direction;
-
-            right = Range.clip(right, -2, 2);
-            left = Range.clip(left, -2, 2);
-
-            if (false) //Slow control
-            {
-                if (right > SLOW_POWER)
-                {
-                    right = SLOW_POWER;
-                }
-
-                if (right < -SLOW_POWER)
-                {
-                    right = -SLOW_POWER;
-                }
-
-                if (left > SLOW_POWER)
-                {
-                    left = SLOW_POWER;
-                }
-
-                if (left < -SLOW_POWER)
-                {
-                    left = -SLOW_POWER;
-                }
-            }
-
-            else
-            {
-
-                if (rightPower > 1)
-                {
-                    rightPower = 1;
-                }
-
-                if (rightPower < -1)
-                {
-                    rightPower = -1;
-                }
-
-                if (leftPower > 1)
-                {
-                    leftPower = 1;
-                }
-
-                if (leftPower < -1)
-                {
-                    leftPower = -1;
-                }
-            }
-
-            if (Math.abs(right) < JOYSTICK_THRESHOLD)
-            {
-                right = 0;
-            }
-
-            if (Math.abs(left) < JOYSTICK_THRESHOLD)
-            {
-                left = 0;
-            }
-
-            if (left == 0 && right == 0)
-            {
-
-            }
-
-            setLeftDrivePower(left);
-            setRightDrivePower(right);
-
-            if (gamepad1.start)
-            {
-                g1Stick1Xinit = gamepad1.left_stick_x;
-                g1Stick1Yinit = gamepad1.left_stick_y;
-            }
-
-            //we don't need reverse drive for now
-
-            if (gamepad2.b != prevB2 && gamepad2.b) //acts on button press
-            {
-                reverseDriveOn = !reverseDriveOn;
-            }
-*/
-
-
 
                 double leftPower;
                 double rightPower;
-                // Driving wheels using y1,x1 joystick
-/*
-                if (!reverse)
-                {
-                    leftPower = gamepad1.left_stick_y * 0.8 + gamepad1.left_stick_x * 0.8;
-                    rightPower = gamepad1.left_stick_y * 0.8 - gamepad1.left_stick_x * 0.8;
-                }
 
-                else
-                {
-                    leftPower = gamepad1.left_stick_y * 0.8 - gamepad1.left_stick_x * 0.8;
-                    rightPower = gamepad1.left_stick_y * 0.8 + gamepad1.left_stick_x * 0.8;
-                }
-*/
                 double throttle = (-(gamepad1.left_stick_y - g1Stick1Yinit));
                 double direction = (gamepad1.left_stick_x - g1Stick1Xinit);
 
@@ -298,16 +204,6 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                 {
                     double frontPower;
                     double backPower;
-/*
-                    frontPower = joystick.joy1_y2 * 0.8 + joystick.joy1_x2 * 0.8; //reverse + and - signs if direction is wrong.
-                    backPower = joystick.joy1_y2 * 0.8 - joystick.joy1_x2 * 0.8;
-
-                    if (reverse)
-                    {
-                        frontPower = -frontPower;
-                        backPower = -backPower;
-                    }
-*/
 
                     throttle = (-(gamepad1.right_stick_y - g1Stick1Yinit));
                     direction = (gamepad1.right_stick_x - g1Stick1Xinit);
@@ -332,30 +228,33 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                     {
                         backPower = 0;
                     }
-/*
+
                     if (frontPower == 0 && backPower == 0)
                     {
-                        int strafePowerVal = 15;
-                        int topHatVal = joystick.joy1_TopHat;
-
-                        if (topHatVal == 6)
+                        if (dPadMode == DPAD_DRIVE)
                         {
-                            // go forward
-                            frontPower = strafePowerVal;
-                            backPower = -strafePowerVal;
+                            if (gamepad1.dpad_up) setDrivePower(-0.21);
+                            else if (gamepad1.dpad_down) setDrivePower(0.21);
+                            else if (gamepad1.dpad_right) setStrafePower(-0.34);
+                            else if (gamepad1.dpad_left) setStrafePower(0.34);
+                            else setDrivePower(0);
                         }
-                        else if (topHatVal == 2)
+
+                        else
                         {
-                            // go backward
-                            frontPower = -strafePowerVal;
-                            backPower = strafePowerVal;
+                            setDrivePower(0);
                         }
                     }
-*/
-                    setMotorPower(leftFrontMotor, frontPower);
-                    setMotorPower(rightFrontMotor, backPower);
-                    setMotorPower(leftBackMotor, backPower);
-                    setMotorPower(rightBackMotor, frontPower);
+
+                    else
+                    {
+
+                        setMotorPower(leftFrontMotor, frontPower);
+                        setMotorPower(rightFrontMotor, backPower);
+                        setMotorPower(leftBackMotor, backPower);
+                        setMotorPower(rightBackMotor, frontPower);
+                    }
+
                     strafing = true;
                 }
 
@@ -376,23 +275,33 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                     setRightDrivePower(rightPower);
                 }
 
-                if (gamepad1.back)
+                if (gamepad1.start && !prevGamepad1.start)
                 {
                     reverse = !reverse;
-                    sleep (20);
+                    //sleep (20);
                 }
 
+            if (gamepad1.back && !prevGamepad1.back)
+            {
+                dPadMode = !dPadMode;
+            }
 
             if (shooterState == SHOOTER_READY)
             {
-                if ((gamepad1.a && !prevGamepad1.a))
+                if ((gamepad1.a && !prevGamepad1.a) || (gamepad2.a && !prevGamepad2.a))
                 {
                     shootMulti();
                 }
 
-                else if (gamepad2.a)
+                else if (gamepad2.x)
                 {
                     setMotorPower(shooterMotor, 1.0);
+                    shooterChanged = true;
+                }
+
+                else if (gamepad2.y)
+                {
+                    setMotorPower(shooterMotor, -1.0);
                     shooterChanged = true;
                 }
                 else setMotorPower(shooterMotor, 0.0);
@@ -405,25 +314,39 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
             if (gamepad1.x && (!prevB1)) shootMulti();
             if (gamepad1.y && (!prevGamepad1.y)) shootMulti(); //if this prevGamepad thing works then all the individual previous value variables can be eliminated.
 */
-            if (gamepad1.right_bumper) setSweeperPower(1.0);
-            else if (gamepad1.right_trigger > 0.7) setSweeperPower(-1.0);
+            if (gamepad1.right_bumper || gamepad2.right_bumper) setSweeperPower(1.0);
+            else if (gamepad1.right_trigger > 0.7 || gamepad2.right_trigger > 0.7) setSweeperPower(-1.0);
             else setSweeperPower(0);
 
-            if (gamepad1.b && !prevGamepad1.b)
+            if ((gamepad1.b && !prevGamepad1.b) || (gamepad2.b && !prevGamepad2.b))
                 moveDoor(doorServo.getPosition() != DOOR_OPEN ? DOOR_OPEN : DOOR_CLOSED);
 
-            if (gamepad1.y && !prevGamepad1.y)
+            if ((gamepad1.y && !prevGamepad1.y) || (gamepad2.start && !prevGamepad2.start))
                 moveRackAndPinion(autoExtendServo.getPosition() != RP_IN ? RP_IN : RP_OUT);
 
-            if (gamepad1.dpad_up) setMotorPower(liftMotor, 1.0);
-            else if (gamepad1.dpad_down) setMotorPower(liftMotor, -1.0);
-            else setMotorPower(liftMotor, 0);
+            double liftPower = 0;
 
-            if (gamepad1.dpad_left) moveLiftTiltServo(LIFT_TILT_BACKWARDS);
-            else if (gamepad1.dpad_right) moveLiftTiltServo(LIFT_TILT_FORWARDS);
+            if (dPadMode == DPAD_LIFT)
+            {
+                if (gamepad1.dpad_up) liftPower = 1.0;
+                else if (gamepad1.dpad_down) liftPower = -1.0;
+                else liftPower = 0;
+            }
 
-            if (gamepad1.left_bumper && !prevGamepad1.left_bumper) setShooterPreset(currentShooterPreset + 1);
-            if (gamepad1.left_trigger > 0.7 && !(prevGamepad1.left_trigger > 0.7)) setShooterPreset(currentShooterPreset - 1);
+            if (liftPower == 0)
+            {
+                if (gamepad2.dpad_up) liftPower = 1.0;
+                else if (gamepad2.dpad_down) liftPower = -1.0;
+                else liftPower = 0;
+            }
+
+            setMotorPower(liftMotor, liftPower);
+
+            if ((gamepad1.dpad_left && dPadMode == DPAD_LIFT) || gamepad2.dpad_left) moveLiftTiltServo(LIFT_TILT_BACKWARDS);
+            else if ((gamepad1.dpad_right  && dPadMode == DPAD_LIFT) || gamepad2.dpad_right) moveLiftTiltServo(LIFT_TILT_FORWARDS);
+
+            if ((gamepad1.left_bumper && !prevGamepad1.left_bumper) || (gamepad2.left_bumper && !prevGamepad2.left_bumper)) setShooterPreset(currentShooterPreset + 1);
+            if ((gamepad1.left_trigger > 0.7 && !(prevGamepad1.left_trigger > 0.7)) || (gamepad2.left_trigger > 0.7 && !(prevGamepad2.left_trigger > 0.7))) setShooterPreset(currentShooterPreset - 1);
 
             //for debug
             /*

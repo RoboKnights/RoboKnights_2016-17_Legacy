@@ -139,7 +139,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final double ST_1 = 0.0;
     protected static final double ST_2 = 0.1;
     protected static final double[] SHOOTER_TILT = {0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1};
-    protected int currentShooterPreset = 0;
+    protected int currentShooterPreset = 4;
 
     //MOTORS AND SERVOS:
 
@@ -241,19 +241,19 @@ public abstract class OpMode_5220 extends LinearOpMode
         //gyroSensor = hardwareMap.gyroSensor.get("gSensor");
         touchSensorFront = hardwareMap.touchSensor.get("tSensor");
 
-
+/*
 
         navX = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("Device Interface Module 3"),
                 NAVX_DIM_I2C_PORT,
                 AHRS.DeviceDataType.kProcessedData);
-
+*/
     }
 
     public void initialize()
     {
         //swivelServo.setPosition(SWIVEL_INIT);
         shooterInit = getEncoderValue(shooterMotor);
-        setShooterPreset(0);
+        setShooterPreset(currentShooterPreset);
         moveLiftTiltServo(LIFT_TILT_BACKWARDS);
         moveRackAndPinion(RP_IN);
         moveDoor (DOOR_CLOSED);
@@ -269,7 +269,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         gyroSensor.resetZAxisIntegrator();
         waitFullCycle();
 */
-        navX.zeroYaw();
+       // navX.zeroYaw();
 
         phase = INIT;
 
@@ -350,13 +350,13 @@ public abstract class OpMode_5220 extends LinearOpMode
             debugLoopOn = true;
             while (debugLoopOn && opModeIsActive())
             {
-
+                /*
                 yaw = df.format(navX.getYaw());
                 pitch = df.format(navX.getPitch());
                 roll = df.format(navX.getRoll());
                 fh = df.format(navX.getFusedHeading());
                 yprf = yaw + ", " + pitch + ", " + roll + ", " + fh;
-
+*/
                 telemetry.addData("1", "Time Elapsed:" + gameTimer.time());
 
                 telemetry.addData("2", "LFM: " + leftFrontMotor.getCurrentPosition() + ", RFM: " + rightFrontMotor.getCurrentPosition());
@@ -365,7 +365,8 @@ public abstract class OpMode_5220 extends LinearOpMode
 
                 telemetry.addData("5", "Down: R = " + colorSensorDown.red() + ", G = " + colorSensorDown.green() + ", B = " + colorSensorDown.blue() + ", A = " +  colorSensorDown.alpha());
                 telemetry.addData("6", "Front: R = " + colorSensorFront.red() + ", G = " + colorSensorFront.green() + ", B = " + colorSensorFront.blue() + ", A = " +  colorSensorFront.alpha());
-                telemetry.addData ("7", "Y,P,R,FH: " + yprf);
+               // telemetry.addData ("7", "Y,P,R,FH: " + yprf);
+                telemetry.addData("8", "Shooter Tilt: " + SHOOTER_TILT[currentShooterPreset]);
 
 
                 //waitOneFullHardwareCycle();
