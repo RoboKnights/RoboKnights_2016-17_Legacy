@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
+import com.qualcomm.robotcore.util.Range;
 
 
 //TODO:
@@ -56,7 +57,7 @@ public class Autonomous_5220 extends OpMode_5220
 
     private Autonomous_5220 opMode = this;
 
-    private boolean color = BLUE; //arbitrary default
+    private boolean color = RED; //arbitrary default
     private int startPosition = START_RAMP;
     private int startWaitTime = 0; //in seconds, no need for non-integer numbers.
     private boolean firstBeacon = NEAR;
@@ -306,21 +307,14 @@ public class Autonomous_5220 extends OpMode_5220
 
     public void autonomous ()
     {
-        move (-5, 0.4);
-        rotateEncoder(3.5);
-        move(-64.8);
-        rotateEncoder(-3.5);
-        strafeTime(3000, -0.9);
-        sleep(2000);
-        strafe(2.7);
-        //moveRackAndPinion(RP_OUT);
-        sleep(2000);
-        while (colorSensorFront.blue() < 4) setDrivePower(0.2);
-        stopDrivetrain();
-        sleep(1500);
-        strafeTime(1500, -0.9);
-        strafe(3);
-        stopDrivetrain();
+        startToWall();
+        wallToBeacon(firstBeacon);
+        beaconToWall(firstBeacon);
+        wallToBeacon(!firstBeacon);
+        beaconToWall(!firstBeacon);
+        wallToBall();
+
+
 
         /*
         startToLine();
@@ -341,7 +335,7 @@ public class Autonomous_5220 extends OpMode_5220
         */
     }
 
-    private void startToLine ()
+    private void startToWall ()
     {
         boolean c = color;
 
@@ -349,42 +343,19 @@ public class Autonomous_5220 extends OpMode_5220
         {
             if (startPosition == START_RAMP)
             {
-                if(firstBeacon == NEAR)
-                {
-                    move (-5, 0.4);
-                    //shootAutonomousBalls();
-
-                    /*
-                    rotateEncoder(7.3);
-                    move (-32);
-                    driveToLine(-0.24);
-                    rotateEncoder(10);
-                    strafeToLine(0.3);
-                    strafe(-3);
-                    followLineUntilTouch();
-                    */
-
-
-                }
-
-                else if (firstBeacon == FAR)
-                {
-
-                }
+                move (-7, 0.4);
+                rotateEncoder(-28.2);
+                move(67);
+                sleep(250);
+                rotateEncoder(-4);
+                strafeTime(1800, 0.95);
+                //sleep(2000);
 
             }
 
             else if (startPosition == START_CORNER)
             {
-                if(firstBeacon == NEAR)
-                {
 
-                }
-
-                else if (firstBeacon == FAR)
-                {
-
-                }
             }
 
             else if (startPosition == START_STRAIGHT)
@@ -398,28 +369,17 @@ public class Autonomous_5220 extends OpMode_5220
 
             if (startPosition == START_RAMP)
             {
-                if(firstBeacon == NEAR)
-                {
-
-                }
-
-                else if (firstBeacon == FAR)
-                {
-
-                }
+                move (-7, 0.4);
+                rotateEncoder(-3.8);
+                move(-70);
+                //sleep(250);
+                rotateEncoder(4);
+                strafeTime(1800, 0.95);
             }
 
             else if (startPosition == START_CORNER)
             {
-                if(firstBeacon == NEAR)
-                {
 
-                }
-
-                else if (firstBeacon == FAR)
-                {
-
-                }
             }
 
             else if (startPosition == START_STRAIGHT) //untested
@@ -429,6 +389,120 @@ public class Autonomous_5220 extends OpMode_5220
         }
 
         sleep(100);
+    }
+
+    private void wallToBeacon (boolean beacon)
+    {
+        if (color == BLUE)
+        {
+            strafe(-2.5);
+            //moveRackAndPinion(RP_OUT);
+            sleep(200);
+            waitFullCycle();
+            resetDriveEncoders();
+            double power;
+            if (beacon == NEAR) power = -0.3;
+            else power = 0.3;
+            double powerChange = 0;
+            while (runConditions() && colorSensorFront.blue() < 3)
+            {
+                double frontDifference = getEncoderValue(leftFrontMotor) - getEncoderValue(rightFrontMotor);
+                double backDifference = getEncoderValue(leftBackMotor) - getEncoderValue(rightBackMotor);
+                double averageDifference = (frontDifference + backDifference) / 2;
+                powerChange = backDifference * ENCODER_SYNC_PROPORTIONALITY_CONSTANT;
+
+                setLeftDrivePower(Range.clip(power - powerChange, -1.0, 1.0));
+                setRightDrivePower(Range.clip(power + powerChange, -1.0, 1.0));
+                waitNextCycle();
+            }
+            stopDrivetrain();
+
+            sleep(300);
+            move(1.72, 0.19);
+            //sleep(1500);
+            moveRackAndPinion(RP_OUT);
+            sleep(2000);
+            moveRackAndPinion(RP_IN);
+            sleep(700);
+        }
+
+        else if (color == RED)
+        {
+            strafe(-2.5);
+            //moveRackAndPinion(RP_OUT);
+            sleep(200);
+            waitFullCycle();
+
+            resetDriveEncoders();
+            double power;
+            if (beacon == FAR) power = -0.3;
+            else power = 0.3;
+            double powerChange = 0;
+            while (runConditions() && colorSensorFront.red() < 2)
+            {
+                double frontDifference = getEncoderValue(leftFrontMotor) - getEncoderValue(rightFrontMotor);
+                double backDifference = getEncoderValue(leftBackMotor) - getEncoderValue(rightBackMotor);
+                double averageDifference = (frontDifference + backDifference) / 2;
+                powerChange = backDifference * ENCODER_SYNC_PROPORTIONALITY_CONSTANT;
+
+                setLeftDrivePower(Range.clip(power - powerChange, -1.0, 1.0));
+                setRightDrivePower(Range.clip(power + powerChange, -1.0, 1.0));
+                waitNextCycle();
+            }
+            stopDrivetrain();
+
+            sleep(300);
+            if (beacon == NEAR) move (1.4, 0.15);
+            else if (beacon == FAR) move (3.53, 0.15);
+            //sleep(1500);
+            moveRackAndPinion(RP_OUT);
+            sleep(2300);
+            moveRackAndPinion(RP_IN);
+            sleep(700);
+        }
+
+    }
+
+    private void beaconToWall (boolean beacon)
+    {
+        if (color == BLUE)
+        {
+            strafe(-1.6);
+            if (beacon == NEAR) move(17);
+            else move (-21);
+            strafeTime (1200, 0.8);
+            //strafeTime(1500, -0.9);
+            //strafe(3);
+            stopDrivetrain();
+        }
+
+        else if (color == RED)
+        {
+            strafe(-1.6);
+            if (beacon == FAR) move(20);
+            else move (-28);
+            strafeTime (1200, 0.8);
+            //strafeTime(1500, -0.9);
+            //strafe(3);
+            stopDrivetrain();
+        }
+    }
+
+    private void wallToBall ()
+    {
+        if(color == BLUE)
+        {
+            strafe(-21);
+            rotateEncoder(6.4);
+            move(-49);
+        }
+
+        else if (color == RED)
+        {
+            strafe (-23);
+            rotateEncoder(28);
+            move (-36);
+        }
     }
 
     private void moveToOtherBeacon ()
