@@ -57,7 +57,7 @@ public class Autonomous_5220 extends OpMode_5220
 
     private Autonomous_5220 opMode = this;
 
-    private boolean color = RED; //arbitrary default
+    private boolean color = BLUE; //arbitrary default
     private int startPosition = START_RAMP;
     private int startWaitTime = 0; //in seconds, no need for non-integer numbers.
     private boolean firstBeacon = NEAR;
@@ -307,13 +307,15 @@ public class Autonomous_5220 extends OpMode_5220
 
     public void autonomous ()
     {
+        startToShootingPosition();
+        shootAutonomousBalls();
         startToWall();
         wallToBeacon(firstBeacon);
         beaconToWall(firstBeacon);
         wallToBeacon(!firstBeacon);
-        beaconToWall(!firstBeacon);
-        wallToBall();
-
+        //beaconToWall(!firstBeacon);
+        //wallToBall();
+        beaconToBall();
 
 
         /*
@@ -335,6 +337,19 @@ public class Autonomous_5220 extends OpMode_5220
         */
     }
 
+    private void startToShootingPosition(){
+        boolean c = color;
+        move (-7, 0.4);
+
+        if(c == BLUE){
+            rotateEncoder(-1.2);
+        }
+
+        else if(c == RED){
+            rotateEncoder(0.6);
+        }
+    }
+
     private void startToWall ()
     {
         boolean c = color;
@@ -343,7 +358,8 @@ public class Autonomous_5220 extends OpMode_5220
         {
             if (startPosition == START_RAMP)
             {
-                move (-7, 0.4);
+                //move (-7, 0.4);
+                //rotateEncoder(-28.2);
                 rotateEncoder(-28.2);
                 move(67);
                 sleep(250);
@@ -369,9 +385,9 @@ public class Autonomous_5220 extends OpMode_5220
 
             if (startPosition == START_RAMP)
             {
-                move (-7, 0.4);
-                rotateEncoder(-3.8);
-                move(-70);
+                //move (-7, 0.4);
+                rotateEncoder(-5.8);
+                move(-65);
                 //sleep(250);
                 rotateEncoder(4);
                 strafeTime(1800, 0.95);
@@ -418,7 +434,10 @@ public class Autonomous_5220 extends OpMode_5220
             stopDrivetrain();
 
             sleep(300);
-            move(1.72, 0.19);
+            if(beacon == NEAR) {
+                move(1.72, 0.19);
+            }
+
             //sleep(1500);
             moveRackAndPinion(RP_OUT);
             sleep(2000);
@@ -452,8 +471,10 @@ public class Autonomous_5220 extends OpMode_5220
             stopDrivetrain();
 
             sleep(300);
-            if (beacon == NEAR) move (1.4, 0.15);
-            else if (beacon == FAR) move (3.53, 0.15);
+            //if (beacon == NEAR) move (1.4, 0.15);
+            //else if (beacon == FAR) move (3.53, 0.15);
+
+            if(beacon == FAR) move (3.53, 0.15);
             //sleep(1500);
             moveRackAndPinion(RP_OUT);
             sleep(2300);
@@ -468,7 +489,7 @@ public class Autonomous_5220 extends OpMode_5220
         if (color == BLUE)
         {
             strafe(-1.6);
-            if (beacon == NEAR) move(17);
+            if (beacon == NEAR) move(18);
             else move (-21);
             strafeTime (1200, 0.8);
             //strafeTime(1500, -0.9);
@@ -502,6 +523,20 @@ public class Autonomous_5220 extends OpMode_5220
             strafe (-23);
             rotateEncoder(28);
             move (-36);
+        }
+    }
+
+    private void beaconToBall(){
+        if(color == BLUE){
+            strafe(-8);
+            rotateEncoder(6.4);
+            move(-53);
+        }
+
+        else if(color == RED){
+            strafe(-18);
+            rotateEncoder(32);
+            move(-53);
         }
     }
 
@@ -556,8 +591,13 @@ public class Autonomous_5220 extends OpMode_5220
     private void shootAutonomousBalls()
     {
         shoot();
+        moveDoor (DOOR_OPEN);
+        setSweeperPower(1.0);
+        sleep(600);
+        setSweeperPower(0);
+        moveDoor(DOOR_CLOSED);
         shoot();
-        shoot();
+        sleep(550);
     }
 
     private void waitForLine ()
