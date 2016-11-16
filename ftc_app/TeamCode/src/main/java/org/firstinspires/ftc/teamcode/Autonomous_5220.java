@@ -337,15 +337,18 @@ public class Autonomous_5220 extends OpMode_5220
         */
     }
 
-    private void startToShootingPosition(){
+    private void startToShootingPosition()
+    {
         boolean c = color;
         move (-7, 0.4);
 
-        if(c == BLUE){
+        if(c == BLUE)
+        {
             rotateEncoder(-1.2);
         }
 
-        else if(c == RED){
+        else if(c == RED)
+        {
             rotateEncoder(0.6);
         }
     }
@@ -526,14 +529,17 @@ public class Autonomous_5220 extends OpMode_5220
         }
     }
 
-    private void beaconToBall(){
-        if(color == BLUE){
+    private void beaconToBall()
+    {
+        if(color == BLUE)
+        {
             strafe(-8);
             rotateEncoder(6.4);
             move(-53);
         }
 
-        else if(color == RED){
+        else if(color == RED)
+        {
             strafe(-18);
             rotateEncoder(32);
             move(-53);
