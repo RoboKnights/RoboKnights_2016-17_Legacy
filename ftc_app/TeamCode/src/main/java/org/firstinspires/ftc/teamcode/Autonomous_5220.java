@@ -283,163 +283,22 @@ public class Autonomous_5220 extends OpMode_5220
 
     public void test() //for debug, whenever we want to test something independent of the rest of the autonomous program
     {
-        //move(-20, ENCODER);
-        //shoot();
-
-        /*
-        for (int i = 0; i < 5; i++)
-        {
-            move(24, ENCODER);
-            strafe (24);
-            move(-24, ENCODER);
-            strafe (-24);
-        }
-        */
-/*
-        setShooterPreset(currentShooterPreset + 1);
-        move(-20, ENCODER);
-        sleep(500);
-
-        rotateEncoder(-8, 0.5);
-
-        //turnToLine(45);
-        while (runConditions());
-        */
-        setMotorPower(leftFrontMotor, 0.97);
-        setMotorPower(rightBackMotor, 0.97);
-        setMotorPower(leftBackMotor, -0.02);
-        setMotorPower(rightFrontMotor, -0.02);
-        //etMotorPower(leftBackMotor, );
         while (runConditions());
         stopDrivetrain();
     }
 
-    public void autonomous ()
+    //AUTONOMOUS ONLY UTILITIES
+
+    private void shootAutonomousBalls()
     {
-        /*
-        startToShootingPosition();
-        shootAutonomousBalls();
-        shootingPosToWall();
-        wallToBeacon(firstBeacon);
-        beaconToWall(firstBeacon);
-        wallToBeacon(!firstBeacon);
-        //beaconToWall(!firstBeacon);
-        //wallToBall();
-        beaconToBall();
-        */
-
-        startToShootingPosition();
-        shootAutonomousBalls();
-        shootingPosToWall2();
-        pushButtonsAlongWall();
-        alignWithFarLine();
-        farBeaconToBall();
-        stopDrivetrain();
-
-
-        /*
-        startToLine();
-
-        followLineUntilTouch();
-        scoreRescueBeacon();
-
-        if (secondBeaconOn)
-        {
-            moveToOtherBeacon();
-            followLineUntilTouch();
-            scoreRescueBeacon();
-        }
-
-        beaconToShootingPosition();
-        shootAutonomousBalls();
+        shoot();
+        moveDoor (DOOR_OPEN);
+        setSweeperPower(1.0);
+        sleep(600);
+        setSweeperPower(0);
+        moveDoor(DOOR_CLOSED);
+        shoot();
         sleep(100);
-        */
-    }
-
-    private void startToShootingPosition()
-    {
-        boolean c = color;
-        move (-7, 0.4);
-
-        if(c == BLUE)
-        {
-            rotateEncoder(-1.2);
-        }
-
-        else if(c == RED)
-        {
-            rotateEncoder(0.6);
-        }
-    }
-
-    private void shootingPosToWall ()
-    {
-        boolean c = color;
-
-        if (c == BLUE)
-        {
-            if (startPosition == START_RAMP)
-            {
-                //move (-7, 0.4);
-                //rotateEncoder(-28.2);
-                rotateEncoder(-28.2);
-                move(67);
-                sleep(250);
-                rotateEncoder(-4);
-                strafeTime(1800, 0.95);
-                //sleep(2000);
-
-            }
-
-            else if (startPosition == START_CORNER)
-            {
-
-            }
-
-            else if (startPosition == START_STRAIGHT)
-            {
-                //Don't bother with this option for now
-            }
-        }
-
-        else if (c == RED)
-        {
-
-            if (startPosition == START_RAMP)
-            {
-                //move (-7, 0.4);
-                rotateEncoder(-5.8);
-                move(-65);
-                //sleep(250);
-                rotateEncoder(4);
-                strafeTime(1800, 0.95);
-            }
-
-            else if (startPosition == START_CORNER)
-            {
-
-            }
-
-            else if (startPosition == START_STRAIGHT) //untested
-            {
-                //Don't bother with this option for now
-            }
-        }
-
-        sleep(100);
-    }
-
-    private void shootingPosToWall2 ()
-    {
-        if (color == BLUE)
-        {
-            //rotateEncoder(-48);
-            rotateEncoder(12.5);
-            move (-53);
-            rotateEncoder(30);
-            strafeTime(1000, 0.5);
-
-        }
     }
 
     private void diagonalStrafeAgainstWall(boolean direction)
@@ -463,6 +322,46 @@ public class Autonomous_5220 extends OpMode_5220
         }
     }
 
+    private void waitForLine ()
+    {
+        while (runConditions() && getFloorBrightness() < LINE_WHITE_THRESHOLD)
+        {
+
+        }
+    }
+
+    //MAIN AUTONOMOUS CODE:
+
+    private void startToShootingPosition()
+    {
+        boolean c = color;
+        move (-7, 0.4);
+
+        if(c == BLUE)
+        {
+            rotateEncoder(-1.2);
+        }
+
+        else if(c == RED)
+        {
+            rotateEncoder(0.6);
+        }
+    }
+    
+    private void shootingPositionToWall ()
+    {
+        if (color == BLUE)
+        {
+            //rotateEncoder(-48);
+            rotateEncoder(12.5);
+            move (-53);
+            rotateEncoder(30);
+            strafeTime(1000, 0.5);
+
+        }
+    }
+
+
     private void findButton()
     {
         if (color == BLUE)
@@ -470,7 +369,6 @@ public class Autonomous_5220 extends OpMode_5220
             diagonalStrafeAgainstWall(FORWARDS);
             while (runConditions() && colorSensorFront.blue() < 3) ;
             stopDrivetrain();
-            //sleep(100);
         }
 
         else if (color == RED)
@@ -478,9 +376,7 @@ public class Autonomous_5220 extends OpMode_5220
             diagonalStrafeAgainstWall(BACKWARDS);
             while (runConditions() && colorSensorFront.red() < 2) ;
             stopDrivetrain();
-            //sleep(100);
         }
-        //move(1.72, 0.3);
     }
 
     private void pushButton()
@@ -540,109 +436,6 @@ public class Autonomous_5220 extends OpMode_5220
     }
     //OLD STUFF:
 
-
-    private void wallToBeacon (boolean beacon)
-    {
-        if (color == BLUE)
-        {
-            strafe(-2.5);
-            //moveRackAndPinion(RP_OUT);
-            sleep(200);
-            waitFullCycle();
-            resetDriveEncoders();
-            double power;
-            if (beacon == NEAR) power = -0.3;
-            else power = 0.3;
-            double powerChange = 0;
-            while (runConditions() && colorSensorFront.blue() < 3)
-            {
-                double frontDifference = getEncoderValue(leftFrontMotor) - getEncoderValue(rightFrontMotor);
-                double backDifference = getEncoderValue(leftBackMotor) - getEncoderValue(rightBackMotor);
-                double averageDifference = (frontDifference + backDifference) / 2;
-                powerChange = backDifference * ENCODER_SYNC_PROPORTIONALITY_CONSTANT;
-
-                setLeftDrivePower(Range.clip(power - powerChange, -1.0, 1.0));
-                setRightDrivePower(Range.clip(power + powerChange, -1.0, 1.0));
-                waitNextCycle();
-            }
-            stopDrivetrain();
-
-            sleep(300);
-            if(beacon == NEAR) {
-                move(1.72, 0.19);
-            }
-
-            //sleep(1500);
-            moveRackAndPinion(RP_OUT);
-            sleep(2000);
-            moveRackAndPinion(RP_IN);
-            sleep(700);
-        }
-
-        else if (color == RED)
-        {
-            strafe(-2.5);
-            //moveRackAndPinion(RP_OUT);
-            sleep(200);
-            waitFullCycle();
-
-            resetDriveEncoders();
-            double power;
-            if (beacon == FAR) power = -0.3;
-            else power = 0.3;
-            double powerChange = 0;
-            while (runConditions() && colorSensorFront.red() < 2)
-            {
-                double frontDifference = getEncoderValue(leftFrontMotor) - getEncoderValue(rightFrontMotor);
-                double backDifference = getEncoderValue(leftBackMotor) - getEncoderValue(rightBackMotor);
-                double averageDifference = (frontDifference + backDifference) / 2;
-                powerChange = backDifference * ENCODER_SYNC_PROPORTIONALITY_CONSTANT;
-
-                setLeftDrivePower(Range.clip(power - powerChange, -1.0, 1.0));
-                setRightDrivePower(Range.clip(power + powerChange, -1.0, 1.0));
-                waitNextCycle();
-            }
-            stopDrivetrain();
-
-            sleep(300);
-            //if (beacon == NEAR) move (1.4, 0.15);
-            //else if (beacon == FAR) move (3.53, 0.15);
-
-            if(beacon == FAR) move (3.53, 0.15);
-            //sleep(1500);
-            moveRackAndPinion(RP_OUT);
-            sleep(2300);
-            moveRackAndPinion(RP_IN);
-            sleep(700);
-        }
-
-    }
-
-    private void beaconToWall (boolean beacon)
-    {
-        if (color == BLUE)
-        {
-            strafe(-1.6);
-            if (beacon == NEAR) move(18);
-            else move (-21);
-            strafeTime (1200, 0.8);
-            //strafeTime(1500, -0.9);
-            //strafe(3);
-            stopDrivetrain();
-        }
-
-        else if (color == RED)
-        {
-            strafe(-1.6);
-            if (beacon == FAR) move(20);
-            else move (-28);
-            strafeTime (1200, 0.8);
-            //strafeTime(1500, -0.9);
-            //strafe(3);
-            stopDrivetrain();
-        }
-    }
-
     private void wallToBall ()
     {
         if(color == BLUE)
@@ -660,215 +453,43 @@ public class Autonomous_5220 extends OpMode_5220
         }
     }
 
-    private void beaconToBall()
+    public void autonomous ()
     {
-        if(color == BLUE)
-        {
-            strafe(-8);
-            rotateEncoder(6.4);
-            move(-53);
-        }
+        /*
+        startToShootingPosition();
+        shootAutonomousBalls();
+        shootingPosToWall();
+        wallToBeacon(firstBeacon);
+        beaconToWall(firstBeacon);
+        wallToBeacon(!firstBeacon);
+        //beaconToWall(!firstBeacon);
+        //wallToBall();
+        beaconToBall();
+        */
 
-        else if(color == RED)
-        {
-            strafe(-18);
-            rotateEncoder(32);
-            move(-53);
-        }
-    }
-
-    private void moveToOtherBeacon ()
-    {
-        //go right if RED (false) and NEAR (true) OR BLUE (true) and FAR (false)
-        //go left if RED (false) and FAR (false) OR BLUE (true) and NEAR (true)
-        //Need XOR between color and firstBeacon. If XOR is true then go right, otherwise go left
-
-        if (xor(color, firstBeacon)) //GO LEFT
-        {
-
-        }
-
-        else //GO RIGHT
-        {
-
-        }
-    }
-
-    private void beaconToShootingPosition ()
-    {
-        boolean currentBeacon = (secondBeaconOn ? !firstBeacon : firstBeacon);
-
-        if (color == RED)
-        {
-            if (currentBeacon == NEAR)
-            {
-
-            }
-
-            else if (currentBeacon == FAR)
-            {
-
-            }
-        }
-
-        else if (color == BLUE)
-        {
-            if (currentBeacon == NEAR)
-            {
-
-            }
-
-            else if (currentBeacon == FAR)
-            {
-
-            }
-        }
-    }
-
-    private void shootAutonomousBalls()
-    {
-        shoot();
-        moveDoor (DOOR_OPEN);
-        setSweeperPower(1.0);
-        sleep(600);
-        setSweeperPower(0);
-        moveDoor(DOOR_CLOSED);
-        shoot();
-        sleep(100);
-    }
-
-    private void waitForLine ()
-    {
-        while (runConditions() && getFloorBrightness() < LINE_WHITE_THRESHOLD)
-        {
-
-        }
-    }
-
-    private void driveToLine (double power)
-    {
-        if (!runConditions()) return;
-        setDrivePower(power);
-        waitForLine();
+        startToShootingPosition();
+        shootAutonomousBalls();
+        shootingPositionToWall();
+        pushButtonsAlongWall();
+        alignWithFarLine();
+        farBeaconToBall();
         stopDrivetrain();
-    }
-
-    private void turnToLine (double power)
-    {
-        if (!runConditions()) return;
-        setTurnPower(power);
-        waitForLine();
-        stopDrivetrain();
-        sleep(50);
-    }
-
-    private void strafeToLine (double power)
-    {
-        if (!runConditions()) return;
-        setStrafePower(power);
-        waitForLine();
-        stopDrivetrain();
-        sleep(50);
-    }
-
-    private void turnAcrossLine (double power)
-    {
-        if (!runConditions()) return;
-        setTurnPower(power);
-        waitForLine();
-        while (runConditions() && getFloorBrightness() >= LINE_WHITE_THRESHOLD)
-        {
-
-        }
-        stopDrivetrain();
-        sleep(50);
-    }
-
-    private void followLineUntilTouch ()
-    {
-        if (!runConditions()) return;
-
-
-        double proportionalConstant = 1.0 / 80.0;
-
-        while (runConditions() && touchSensorFront.getValue() < 0.04)
-        {
-            /*
-            double rp = -0.1;
-            double lp = -0.3;
-            rp += getFloorBrightness() * proportionalConstant;
-            rp = Math.max(0, lp);
-            rp = Math.min(1, lp);
-            setLeftDrivePower(lp);
-            setRightDrivePower(rp);
-            //INSERT NEW BETTER LINE FOLLOWING ALGORITHM USING MECANUM WHEELS HERE
-            */
-            if (getFloorBrightness() >= LINE_WHITE_THRESHOLD)
-            {
-                setRightDrivePower(-0.3);
-                setLeftDrivePower(-0.08);
-            }
-
-            else
-            {
-                setLeftDrivePower(-0.3);
-                setRightDrivePower(-0.08);
-            }
-        }
-
-        stopDrivetrain();
-        moveTime(200, 0.32);
-        stopDrivetrain();
-    }
-
-    private void scoreRescueBeacon ()
-    {
-        if (!runConditions()) return;
-        Boolean rbcWrapper = getRescueBeaconColor();
-        if (rbcWrapper == null) return;
-        boolean rescueBeaconColor = Boolean.valueOf(rbcWrapper); //make sure this works properly
-        if (rescueBeaconColor == color)
-        {
-
-        }
-
-        else
-        {
-
-        }
-    }
-
-    public Boolean getRescueBeaconColor () //experimental for the time being
-    {
-        int red = colorSensorFront.red();
-        int blue = colorSensorFront.blue();
-        int green = colorSensorFront.green();
-
-        if (red > blue) return RED;
-        else if (blue > red) return BLUE;
-        else return null;
     }
 
     public void main ()
     {
-        //new ProgramKiller().start(); //PROGRAM KILLER MESSES UP AUTONOMOUS.
         //ftcRCA.color = color;
         new DebuggerDisplayLoop().start();
         waitFullCycle();
 
         //navX.zeroYaw();
         waitFullCycle();
-/*
-        lineBlockedTime = lineBlockedTime + startWaitTime; //intentionally disabling this stall detection for now
-        if (startPosition == START_CORNER) lineBlockedTime = lineBlockedTime + 12; //tiny value is intentional, blue is about as fast as red.
-*/
 
-        /*
         colorSensorDown.enableLed(true);
         waitFullCycle();
         colorSensorDown.enableLed(true);
         waitFullCycle();
-*/
+
         while (gameTimer.time() < (startWaitTime * 1000))
         {
 
