@@ -176,7 +176,8 @@ public class Autonomous_5220 extends OpMode_5220
                     colorSensorDown.enableLed(false);
                 }
 
-                waitFullCycle();
+                telemetry.update();
+                waitNextCycle();
 
                 //sleep(10); //not sure if neccessary
             }
@@ -294,7 +295,7 @@ public class Autonomous_5220 extends OpMode_5220
             strafe (-24);
         }
         */
-
+/*
         setShooterPreset(currentShooterPreset + 1);
         move(-20, ENCODER);
         sleep(500);
@@ -303,19 +304,37 @@ public class Autonomous_5220 extends OpMode_5220
 
         //turnToLine(45);
         while (runConditions());
+        */
+        setMotorPower(leftFrontMotor, 0.97);
+        setMotorPower(rightBackMotor, 0.97);
+        setMotorPower(leftBackMotor, -0.02);
+        setMotorPower(rightFrontMotor, -0.02);
+        //etMotorPower(leftBackMotor, );
+        while (runConditions());
+        stopDrivetrain();
     }
 
     public void autonomous ()
     {
+        /*
         startToShootingPosition();
         shootAutonomousBalls();
-        startToWall();
+        shootingPosToWall();
         wallToBeacon(firstBeacon);
         beaconToWall(firstBeacon);
         wallToBeacon(!firstBeacon);
         //beaconToWall(!firstBeacon);
         //wallToBall();
         beaconToBall();
+        */
+
+        startToShootingPosition();
+        shootAutonomousBalls();
+        shootingPosToWall2();
+        pushButtonsAlongWall();
+        alignWithFarLine();
+        farBeaconToBall();
+        stopDrivetrain();
 
 
         /*
@@ -353,7 +372,7 @@ public class Autonomous_5220 extends OpMode_5220
         }
     }
 
-    private void startToWall ()
+    private void shootingPosToWall ()
     {
         boolean c = color;
 
@@ -409,6 +428,118 @@ public class Autonomous_5220 extends OpMode_5220
 
         sleep(100);
     }
+
+    private void shootingPosToWall2 ()
+    {
+        if (color == BLUE)
+        {
+            //rotateEncoder(-48);
+            rotateEncoder(12.5);
+            move (-53);
+            rotateEncoder(30);
+            strafeTime(1000, 0.5);
+
+        }
+    }
+
+    private void diagonalStrafeAgainstWall(boolean direction)
+    {
+        if (direction == FORWARDS)
+        {
+            setMotorPower(leftFrontMotor, 0.8);
+            setMotorPower(rightBackMotor, 0.8);
+
+            setMotorPower(leftBackMotor, 0.1);
+            setMotorPower(rightFrontMotor, 0.1);
+        }
+
+        else if (direction == BACKWARDS)
+        {
+            setMotorPower(leftFrontMotor, -0.1);
+            setMotorPower(rightBackMotor, -0.1);
+
+            setMotorPower(leftBackMotor, -0.8);
+            setMotorPower(rightFrontMotor, -0.8);
+        }
+    }
+
+    private void findButton()
+    {
+        if (color == BLUE)
+        {
+            diagonalStrafeAgainstWall(FORWARDS);
+            while (runConditions() && colorSensorFront.blue() < 3) ;
+            stopDrivetrain();
+            //sleep(100);
+        }
+
+        else if (color == RED)
+        {
+            diagonalStrafeAgainstWall(BACKWARDS);
+            while (runConditions() && colorSensorFront.red() < 2) ;
+            stopDrivetrain();
+            //sleep(100);
+        }
+        //move(1.72, 0.3);
+    }
+
+    private void pushButton()
+    {
+        moveRackAndPinion(RP_OUT);
+        sleep(1500);
+        moveRackAndPinion(RP_IN);
+        sleep(600);
+    }
+
+    private void pushButtonsAlongWall ()
+    {
+        findButton();
+        pushButton();
+        move (color == BLUE ? 18: -14);
+        findButton();
+        pushButton();
+    }
+
+    private void alignWithFarLine()
+    {
+        if (color == BLUE)
+        {
+            move(12, 0.7);
+            diagonalStrafeAgainstWall(BACKWARDS);
+            waitForLine();
+            stopDrivetrain();
+            sleep(150);
+        }
+
+        else if (color == RED)
+        {
+            move (-8, 0.6);
+            diagonalStrafeAgainstWall(FORWARDS);
+            waitForLine();
+
+        }
+    }
+
+    private void farBeaconToBall()
+    {
+        if (color == BLUE)
+        {
+            strafe (-19);
+            rotateEncoder(5.6);
+            move(-55);
+        }
+        //programFinished = true;
+
+        else if (color == RED)
+        {
+            strafe (-19);
+            //rotateEncoder(-5.6);
+            //move(-55);
+        }
+
+    }
+    //OLD STUFF:
+
 
     private void wallToBeacon (boolean beacon)
     {
@@ -603,7 +734,7 @@ public class Autonomous_5220 extends OpMode_5220
         setSweeperPower(0);
         moveDoor(DOOR_CLOSED);
         shoot();
-        sleep(550);
+        sleep(100);
     }
 
     private void waitForLine ()
@@ -744,7 +875,7 @@ public class Autonomous_5220 extends OpMode_5220
         }
 
         lineBlockedTime = 2750000; //really big number just for debug
-       //test();
+        //test();
         autonomous();
     }
 }
