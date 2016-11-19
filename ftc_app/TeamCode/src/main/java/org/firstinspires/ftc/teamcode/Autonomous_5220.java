@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.util.Range;
 
 //TODO:
 
-//IDEA: Use ultrasonic sensor to detect if we are being blocked from proceding to the second beacon, and if that is the case, immediately drive back to the first beacon, re-align, then go shoot as if second beacon was never attempted.
+//IDEA: Use ultrasonic sensor to detect if we are being PATHed from proceding to the second beacon, and if that is the case, immediately drive back to the first beacon, re-align, then go shoot as if second beacon was never attempted.
 
 //Hello world.
 
@@ -52,16 +52,21 @@ public class Autonomous_5220 extends OpMode_5220
     public static final int START_STRAIGHT = 2;
     public static final int NUM_STARTS = 3;
 
-    public double lineBlockedTime = 19500;
-    private boolean lineBlocked = false;
+    public static final int END_BALL = 0;
+    public static final int END_BLOCK = 1;
+    public static final int NUM_ENDS = 2;
+
+    public double linePATHedTime = 19500;
+    private boolean linePATHed = false;
 
     private Autonomous_5220 opMode = this;
 
-    private boolean color = BLUE; //arbitrary default
+    private boolean color = RED; //arbitrary default
     private int startPosition = START_RAMP;
     private int startWaitTime = 0; //in seconds, no need for non-integer numbers.
     private boolean firstBeacon = NEAR;
     private boolean secondBeaconOn = true;
+    private int endPath = END_BALL;
 
     public ProgramType getProgramType ()
     {
@@ -92,9 +97,10 @@ public class Autonomous_5220 extends OpMode_5220
         private static final int WAIT = 2;
         private static final int FIRST_BEACON = 3;
         private static final int SECOND_BEACON_ON = 4;
+        private static final int PATH = 5;
 
 
-        private static final int NUM_SETTINGS = 5; //always make sure this is correct.
+        private static final int NUM_SETTINGS = 6; //always make sure this is correct.
 
         private int currentSetting = 0;
 
@@ -109,6 +115,7 @@ public class Autonomous_5220 extends OpMode_5220
             telemetryLines[WAIT] = ("Wait Time (in seconds): " + startWaitTime /*+ " seconds"*/);
             telemetryLines[FIRST_BEACON] = ("First Beacon Choice: " + ((firstBeacon == NEAR) ? "NEAR" : "FAR"));
             telemetryLines[SECOND_BEACON_ON] = ("Second Beacon Scoring: " + (secondBeaconOn ? "ON" : "OFF"));
+            telemetryLines[PATH] = (endPathToString(endPath));
             writeLinesToTelemetry();
 
             boolean prevL = false;
@@ -238,6 +245,12 @@ public class Autonomous_5220 extends OpMode_5220
                 telemetryLines[SECOND_BEACON_ON] = ("Second Beacon Scoring: " + (secondBeaconOn ? "ON" : "OFF"));
             }
 
+            else if (setting == PATH)
+            {
+                endPath = (endPath + direction) % NUM_STARTS;
+                telemetryLines[PATH] = ("End Path: " + endPathToString(endPath));
+            }
+
             if (telemetryLines[currentSetting].charAt(0) != '*') //change to string equals comparison if this doesn't work
             {
                 telemetryLines[currentSetting] = "*" + telemetryLines[currentSetting];
@@ -268,6 +281,16 @@ public class Autonomous_5220 extends OpMode_5220
                 case START_RAMP: return "RAMP START";
                 case START_CORNER: return "CORNER START";
                 case START_STRAIGHT: return "STRAIGHT START";
+                default: return "Error: Start Position Number.";
+            }
+        }
+
+        private String endPathToString (int s)
+        {
+            switch (s)
+            {
+                case END_BALL: return "BALL";
+                case END_BLOCK: return "BEACON DEFENSE";
                 default: return "Error: Start Position Number.";
             }
         }
@@ -307,6 +330,8 @@ public class Autonomous_5220 extends OpMode_5220
         {
             setMotorPower(leftFrontMotor, 0.8);
             setMotorPower(rightBackMotor, 0.8);
+            //setMotorPower(leftFrontMotor, 0.6);
+            //setMotorPower(rightBackMotor, 0.6);
 
             setMotorPower(leftBackMotor, 0.1);
             setMotorPower(rightFrontMotor, 0.1);
@@ -334,17 +359,16 @@ public class Autonomous_5220 extends OpMode_5220
 
     private void startToShootingPosition()
     {
-        boolean c = color;
         move (-7, 0.4);
 
-        if(c == BLUE)
+        if(color == BLUE)
         {
             rotateEncoder(-1.2);
         }
 
-        else if(c == RED)
+        else if(color == RED)
         {
-            rotateEncoder(0.6);
+            rotateEncoder(0.3);
         }
     }
     
@@ -352,12 +376,17 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if (color == BLUE)
         {
-            //rotateEncoder(-48);
             rotateEncoder(12.5);
             move (-53);
             rotateEncoder(30);
             strafeTime(1000, 0.5);
+        }
 
+        else if (color == RED){
+            rotateEncoder(-11.3);
+            move(-46);
+            rotateEncoder(11.6);
+            strafeTime(1000, 0.5);
         }
     }
 
@@ -390,9 +419,15 @@ public class Autonomous_5220 extends OpMode_5220
     private void pushButtonsAlongWall ()
     {
         findButton();
+        if(color == RED){
+            move(1.8);
+        }
         pushButton();
         move (color == BLUE ? 18: -14);
         findButton();
+        if(color == RED){
+            move(1.8);
+        }
         pushButton();
     }
 
@@ -412,7 +447,8 @@ public class Autonomous_5220 extends OpMode_5220
             move (-8, 0.6);
             diagonalStrafeAgainstWall(FORWARDS);
             waitForLine();
-
+            stopDrivetrain();
+            sleep(150);
         }
     }
 
@@ -428,11 +464,24 @@ public class Autonomous_5220 extends OpMode_5220
 
         else if (color == RED)
         {
-            strafe (-19);
-            //rotateEncoder(-5.6);
-            //move(-55);
+            strafe (-17);
+            rotateEncoder(32);
+            move(-44);
+        }
+    }
+
+    private void farBeaconToOpponent()
+    {
+        if(color == BLUE)
+        {
+            strafe(-30);
+            move(-55);
         }
 
+        else if(color == RED)
+        {
+
+        }
     }
     //OLD STUFF:
 
@@ -472,7 +521,12 @@ public class Autonomous_5220 extends OpMode_5220
         shootingPositionToWall();
         pushButtonsAlongWall();
         alignWithFarLine();
-        farBeaconToBall();
+        if(endPath == END_BLOCK){
+            farBeaconToOpponent();
+        }
+        else if(endPath == END_BALL){
+            farBeaconToBall();
+        }
         stopDrivetrain();
     }
 
@@ -490,12 +544,15 @@ public class Autonomous_5220 extends OpMode_5220
         colorSensorDown.enableLed(true);
         waitFullCycle();
 
+        moveRackAndPinion(RP_RELEASE);
+        waitFullCycle();
+
         while (gameTimer.time() < (startWaitTime * 1000))
         {
 
         }
 
-        lineBlockedTime = 2750000; //really big number just for debug
+        linePATHedTime = 2750000; //really big number just for debug
         //test();
         autonomous();
     }

@@ -136,6 +136,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final double LIFT_TILT_FORWARDS = 0.523;
 
     protected static final double RP_IN = 0.0;
+    protected static final double RP_RELEASE = 0.08;
     protected static final double RP_OUT = 0.4;
 
     protected static final double ST_1 = 0.0;
