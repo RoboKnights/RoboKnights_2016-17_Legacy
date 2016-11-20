@@ -342,8 +342,8 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
 
             setMotorPower(liftMotor, liftPower);
 
-            if ((gamepad1.dpad_left && dPadMode == DPAD_LIFT) || gamepad2.dpad_left) moveLiftTiltServo(LIFT_TILT_BACKWARDS);
-            else if ((gamepad1.dpad_right  && dPadMode == DPAD_LIFT) || gamepad2.dpad_right) moveLiftTiltServo(LIFT_TILT_FORWARDS);
+            if ((gamepad1.dpad_left && dPadMode == DPAD_LIFT) || gamepad2.dpad_left) moveLiftTiltServo(LIFT_TILT_FORWARDS);
+            else if ((gamepad1.dpad_right  && dPadMode == DPAD_LIFT) || gamepad2.dpad_right) moveLiftTiltServo(LIFT_TILT_BACKWARDS );
 
             if ((gamepad1.left_bumper && !prevGamepad1.left_bumper) || (gamepad2.left_bumper && !prevGamepad2.left_bumper)) setShooterPreset(currentShooterPreset + 1);
             if ((gamepad1.left_trigger > 0.7 && !(prevGamepad1.left_trigger > 0.7)) || (gamepad2.left_trigger > 0.7 && !(prevGamepad2.left_trigger > 0.7))) setShooterPreset(currentShooterPreset - 1);

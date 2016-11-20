@@ -328,10 +328,10 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if (direction == FORWARDS)
         {
-            setMotorPower(leftFrontMotor, 0.8);
-            setMotorPower(rightBackMotor, 0.8);
-            //setMotorPower(leftFrontMotor, 0.6);
-            //setMotorPower(rightBackMotor, 0.6);
+            //setMotorPower(leftFrontMotor, 0.8);
+            //setMotorPower(rightBackMotor, 0.8);
+            setMotorPower(leftFrontMotor, 0.6);
+            setMotorPower(rightBackMotor, 0.6);
 
             setMotorPower(leftBackMotor, 0.1);
             setMotorPower(rightFrontMotor, 0.1);
@@ -342,8 +342,10 @@ public class Autonomous_5220 extends OpMode_5220
             setMotorPower(leftFrontMotor, -0.1);
             setMotorPower(rightBackMotor, -0.1);
 
-            setMotorPower(leftBackMotor, -0.8);
-            setMotorPower(rightFrontMotor, -0.8);
+            //setMotorPower(leftBackMotor, -0.8);
+            //setMotorPower(rightFrontMotor, -0.8);
+            setMotorPower(leftBackMotor, -0.6);
+            setMotorPower(rightFrontMotor, -0.6);
         }
     }
 
@@ -435,7 +437,8 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if (color == BLUE)
         {
-            move(12, 0.7);
+            //move(12, 0.7);
+            move(14, 0.7);
             diagonalStrafeAgainstWall(BACKWARDS);
             waitForLine();
             stopDrivetrain();
@@ -456,7 +459,8 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if (color == BLUE)
         {
-            strafe (-19);
+            //strafe (-19);
+            strafe(-22);
             rotateEncoder(5.6);
             move(-55);
         }
@@ -474,13 +478,14 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if(color == BLUE)
         {
-            strafe(-30);
-            move(-55);
+            strafe(-62);
+            move(15);
         }
 
         else if(color == RED)
         {
-
+            strafe(-62);
+            move(-15);
         }
     }
     //OLD STUFF:
@@ -520,11 +525,11 @@ public class Autonomous_5220 extends OpMode_5220
         shootAutonomousBalls();
         shootingPositionToWall();
         pushButtonsAlongWall();
-        alignWithFarLine();
         if(endPath == END_BLOCK){
             farBeaconToOpponent();
         }
         else if(endPath == END_BALL){
+            alignWithFarLine();
             farBeaconToBall();
         }
         stopDrivetrain();
