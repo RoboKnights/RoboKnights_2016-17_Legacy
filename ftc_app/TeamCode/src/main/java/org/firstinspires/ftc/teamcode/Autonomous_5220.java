@@ -312,8 +312,8 @@ public class Autonomous_5220 extends OpMode_5220
 
     //AUTONOMOUS ONLY UTILITIES
 
-    private void shootAutonomousBalls()
-    {
+    private void shootAutonomousBalls() {
+
         shoot();
         moveDoor (DOOR_OPEN);
         setSweeperPower(1.0);
@@ -322,16 +322,33 @@ public class Autonomous_5220 extends OpMode_5220
         moveDoor(DOOR_CLOSED);
         shoot();
         sleep(100);
+
+        /*setSweeperPower(1.0);
+        sleep(500);
+
+        setSweeperPower(0.0);
+        sleep(500);
+
+        shoot();
+        sleep(100);*/
     }
 
     private void diagonalStrafeAgainstWall(boolean direction)
     {
         if (direction == FORWARDS)
         {
-            //setMotorPower(leftFrontMotor, 0.8);
-            //setMotorPower(rightBackMotor, 0.8);
-            setMotorPower(leftFrontMotor, 0.6);
-            setMotorPower(rightBackMotor, 0.6);
+            /*setMotorPower(leftFrontMotor, 0.9);
+            setMotorPower(rightBackMotor, 0.9);
+
+            setMotorPower(leftBackMotor, 0.05);
+            setMotorPower(rightFrontMotor, 0.25); */
+
+
+            ///////////////////
+            //Original Values//
+            ///////////////////
+            setMotorPower(leftFrontMotor, 0.7);
+            setMotorPower(rightBackMotor, 0.7);
 
             setMotorPower(leftBackMotor, 0.1);
             setMotorPower(rightFrontMotor, 0.1);
@@ -339,13 +356,20 @@ public class Autonomous_5220 extends OpMode_5220
 
         else if (direction == BACKWARDS)
         {
+            /*setMotorPower(leftFrontMotor, -0.05);
+            setMotorPower(rightBackMotor, -0.25);
+
+            setMotorPower(leftBackMotor, -0.9);
+            setMotorPower(rightFrontMotor, -0.9);*/
+
+            ///////////////////
+            //Original Values//
+            ///////////////////
             setMotorPower(leftFrontMotor, -0.1);
             setMotorPower(rightBackMotor, -0.1);
 
-            //setMotorPower(leftBackMotor, -0.8);
-            //setMotorPower(rightFrontMotor, -0.8);
-            setMotorPower(leftBackMotor, -0.6);
-            setMotorPower(rightFrontMotor, -0.6);
+            setMotorPower(leftBackMotor, -0.7);
+            setMotorPower(rightFrontMotor, -0.7);
         }
     }
 
@@ -361,33 +385,45 @@ public class Autonomous_5220 extends OpMode_5220
 
     private void startToShootingPosition()
     {
-        move (-7, 0.4);
+        //move (-7, 0.4);
+        //move(-33, 0.4);
 
         if(color == BLUE)
         {
+            move(-7, 0.4);
             rotateEncoder(-1.2);
         }
 
         else if(color == RED)
         {
+            move(-7, 0.5);
+
             rotateEncoder(0.3);
         }
+
     }
     
     private void shootingPositionToWall ()
     {
         if (color == BLUE)
         {
-            rotateEncoder(12.5);
-            move (-53);
-            rotateEncoder(30);
-            strafeTime(1000, 0.5);
+            //rotateEncoder(1.2);
+            //move(26);
+
+            rotateEncoder(11);
+            move (-51);
+            rotateEncoder(29.3);
+            strafeTime(1000, 0.7);
         }
 
-        else if (color == RED){
-            rotateEncoder(-11.3);
-            move(-46);
-            rotateEncoder(11.6);
+        else if (color == RED)
+        {
+            //rotateEncoder(-0.3);
+            //move (26);
+
+            rotateEncoder(-12.5);
+            move(-44.7);
+            rotateEncoder(9.1);
             strafeTime(1000, 0.5);
         }
     }
@@ -459,18 +495,40 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if (color == BLUE)
         {
-            //strafe (-19);
+            /*
             strafe(-22);
             rotateEncoder(5.6);
             move(-55);
+            */
+
+            strafe(-19);
+            //rotateEncoder(5.6);
+            rotateEncoder(5.6);
+            move(-14);
+            sleep(1200);
+
+            shoot();
+            sleep(250);
+            move(-47);
         }
         //programFinished = true;
 
         else if (color == RED)
         {
+            /*
             strafe (-17);
             rotateEncoder(32);
             move(-44);
+            */
+
+            strafe (-17);
+            rotateEncoder(32);
+            move(-14);
+            sleep(1200);
+
+            shoot();
+            sleep(250);
+            move(-38);
         }
     }
 
@@ -522,7 +580,8 @@ public class Autonomous_5220 extends OpMode_5220
         */
 
         startToShootingPosition();
-        shootAutonomousBalls();
+        //shootAutonomousBalls();
+        sleep(100);
         shootingPositionToWall();
         pushButtonsAlongWall();
         if(endPath == END_BLOCK){
