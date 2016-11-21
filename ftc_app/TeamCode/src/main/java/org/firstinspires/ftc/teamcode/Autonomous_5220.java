@@ -312,8 +312,8 @@ public class Autonomous_5220 extends OpMode_5220
 
     //AUTONOMOUS ONLY UTILITIES
 
-    private void shootAutonomousBalls() {
-
+    private void shootAutonomousBalls() 
+    {
         shoot();
         moveDoor (DOOR_OPEN);
         setSweeperPower(1.0);
@@ -323,14 +323,22 @@ public class Autonomous_5220 extends OpMode_5220
         shoot();
         sleep(100);
 
-        /*setSweeperPower(1.0);
+        /*
+        setSweeperPower(1.0);
         sleep(500);
 
         setSweeperPower(0.0);
         sleep(500);
 
         shoot();
-        sleep(100);*/
+        sleep(100);
+        */
+    }
+
+    private void doubleShootAutonomousBalls()
+    {
+        shoot();
+        sleep(250);
     }
 
     private void diagonalStrafeAgainstWall(boolean direction)
@@ -397,10 +405,8 @@ public class Autonomous_5220 extends OpMode_5220
         else if(color == RED)
         {
             move(-7, 0.5);
-
             rotateEncoder(0.3);
         }
-
     }
     
     private void shootingPositionToWall ()
@@ -495,11 +501,10 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if (color == BLUE)
         {
-            /*
+
             strafe(-22);
             rotateEncoder(5.6);
             move(-55);
-            */
 
             strafe(-19);
             //rotateEncoder(5.6);
@@ -515,21 +520,34 @@ public class Autonomous_5220 extends OpMode_5220
 
         else if (color == RED)
         {
-            /*
             strafe (-17);
             rotateEncoder(32);
             move(-44);
-            */
+        }
+    }
 
+    private void farBeaconToFarShooting()
+    {
+        if(color == BLUE)
+        {
+            strafe(-19);
+            rotateEncoder(5.6);
+            move(-14);
+            sleep(1200); //should cut down sleep time
+        }
+
+        if(color == RED) //UNTESTED
+        {
             strafe (-17);
             rotateEncoder(32);
             move(-14);
-            sleep(1200);
-
-            shoot();
-            sleep(250);
-            move(-38);
+            sleep(1200); //should cut down sleep time
         }
+    }
+
+    private void farShootingToBall()
+    {
+        move(-47);
     }
 
     private void farBeaconToOpponent()
