@@ -93,6 +93,7 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final double NORMAL = 2;
     protected static final double ENCODER = 3;
     protected static final double GYRO = 4;
+    protected static final double SLOW = 5;
 
     protected static final double WHEEL_DIAMETER = 4.0; //in inches
     protected static final double GEAR_RATIO = 1.0;

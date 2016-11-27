@@ -273,7 +273,6 @@ public class Autonomous_5220 extends OpMode_5220
 
         }
 
-
         private String startPositionToString (int s)
         {
             switch (s)
@@ -341,43 +340,60 @@ public class Autonomous_5220 extends OpMode_5220
         sleep(250);
     }
 
-    private void diagonalStrafeAgainstWall(boolean direction)
+    private void diagonalStrafeAgainstWall(boolean direction, double... params)
     {
-        if (direction == FORWARDS)
+        double mode = NORMAL;
+
+        if (params.length > 1)
         {
-            /*setMotorPower(leftFrontMotor, 0.9);
-            setMotorPower(rightBackMotor, 0.9);
-
-            setMotorPower(leftBackMotor, 0.05);
-            setMotorPower(rightFrontMotor, 0.25); */
-
-
-            ///////////////////
-            //Original Values//
-            ///////////////////
-            setMotorPower(leftFrontMotor, 0.7);
-            setMotorPower(rightBackMotor, 0.7);
-
-            setMotorPower(leftBackMotor, 0.1);
-            setMotorPower(rightFrontMotor, 0.1);
+            return;
         }
 
-        else if (direction == BACKWARDS)
+        else if(params.length == 1)
         {
-            /*setMotorPower(leftFrontMotor, -0.05);
-            setMotorPower(rightBackMotor, -0.25);
+            mode = params[0];
+        }
 
-            setMotorPower(leftBackMotor, -0.9);
-            setMotorPower(rightFrontMotor, -0.9);*/
+        if(mode == NORMAL)
+        {
+            if (direction == FORWARDS)
+            {
+                setMotorPower(leftFrontMotor, 0.7);
+                setMotorPower(rightBackMotor, 0.7);
 
-            ///////////////////
-            //Original Values//
-            ///////////////////
-            setMotorPower(leftFrontMotor, -0.1);
-            setMotorPower(rightBackMotor, -0.1);
+                setMotorPower(leftBackMotor, 0.1);
+                setMotorPower(rightFrontMotor, 0.1);
+            }
 
-            setMotorPower(leftBackMotor, -0.7);
-            setMotorPower(rightFrontMotor, -0.7);
+            else if (direction == BACKWARDS)
+            {
+                setMotorPower(leftFrontMotor, -0.1);
+                setMotorPower(rightBackMotor, -0.1);
+
+                setMotorPower(leftBackMotor, -0.7);
+                setMotorPower(rightFrontMotor, -0.7);
+            }
+        }
+
+        else if(mode == SLOW) //VALUES NEED TO BE TESTED
+        {
+            if (direction == FORWARDS)
+            {
+                setMotorPower(leftFrontMotor, 0.5);
+                setMotorPower(rightBackMotor, 0.5);
+
+                setMotorPower(leftBackMotor, 0.1);
+                setMotorPower(rightFrontMotor, 0.1);
+            }
+
+            else if (direction == BACKWARDS)
+            {
+                setMotorPower(leftFrontMotor, -0.1);
+                setMotorPower(rightBackMotor, -0.1);
+
+                setMotorPower(leftBackMotor, -0.5);
+                setMotorPower(rightFrontMotor, -0.5);
+            }
         }
     }
 
@@ -463,15 +479,21 @@ public class Autonomous_5220 extends OpMode_5220
     private void pushButtonsAlongWall ()
     {
         findButton();
-        if(color == RED){
+
+        if(color == RED)
+        {
             move(1.8);
         }
+
         pushButton();
         move (color == BLUE ? 18: -14);
         findButton();
-        if(color == RED){
+
+        if(color == RED)
+        {
             move(1.8);
         }
+
         pushButton();
     }
 
@@ -481,7 +503,7 @@ public class Autonomous_5220 extends OpMode_5220
         {
             //move(12, 0.7);
             move(14, 0.7);
-            diagonalStrafeAgainstWall(BACKWARDS);
+            diagonalStrafeAgainstWall(BACKWARDS, SLOW);
             waitForLine();
             stopDrivetrain();
             sleep(150);
@@ -490,7 +512,7 @@ public class Autonomous_5220 extends OpMode_5220
         else if (color == RED)
         {
             move (-8, 0.6);
-            diagonalStrafeAgainstWall(FORWARDS);
+            diagonalStrafeAgainstWall(FORWARDS, SLOW);
             waitForLine();
             stopDrivetrain();
             sleep(150);
@@ -501,7 +523,6 @@ public class Autonomous_5220 extends OpMode_5220
     {
         if (color == BLUE)
         {
-
             strafe(-22);
             rotateEncoder(5.6);
             move(-55);
@@ -602,13 +623,18 @@ public class Autonomous_5220 extends OpMode_5220
         sleep(100);
         shootingPositionToWall();
         pushButtonsAlongWall();
-        if(endPath == END_BLOCK){
+
+        if(endPath == END_BLOCK)
+        {
             farBeaconToOpponent();
         }
-        else if(endPath == END_BALL){
+
+        else if(endPath == END_BALL)
+        {
             alignWithFarLine();
             farBeaconToBall();
         }
+
         stopDrivetrain();
     }
 
