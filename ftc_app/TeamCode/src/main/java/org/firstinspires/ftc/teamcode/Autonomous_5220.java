@@ -59,6 +59,8 @@ public class Autonomous_5220 extends OpMode_5220
     public double linePATHedTime = 19500;
     private boolean linePATHed = false;
 
+    private double overLineTime = 950;
+
     private Autonomous_5220 opMode = this;
 
     private boolean color = RED; //arbitrary default
@@ -402,6 +404,58 @@ public class Autonomous_5220 extends OpMode_5220
         while (runConditions() && getFloorBrightness() < LINE_WHITE_THRESHOLD)
         {
 
+        }
+    }
+
+    private void safeWaitForLine() //NEED TO TEST
+    {
+        double firstColor = DETECT_NONE;
+        boolean detectBoth = false;
+
+        while(runConditions() && getFloorBrightness() < LINE_WHITE_THRESHOLD)
+        {
+            if(colorSensorFront.blue() >= 3)
+            {
+                firstColor = DETECT_BLUE;
+            }
+
+            else if(colorSensorFront.red() >= 2)
+            {
+                firstColor = DETECT_RED;
+            }
+
+            if(firstColor == DETECT_RED && colorSensorFront.blue() >= 3)
+            {
+                detectBoth = true;
+            }
+
+            else if(firstColor == DETECT_BLUE && colorSensorFront.red() >= 2)
+            {
+                detectBoth = true;
+            }
+
+            if(detectBoth)
+            {
+                int beginning = gameTimer.time();
+
+                if(gameTimer.time() > beginning + overLineTime)
+                {
+                    moveBackToLine();
+                }
+            }
+        }
+    }
+
+    private void moveBackToLine()
+    {
+        if (color == BLUE)
+        {
+            diagonalStrafeAgainstWall(FORWARDS, SLOW);
+        }
+
+        else if (color == RED)
+        {
+            diagonalStrafeAgainstWall(BACKWARDS, SLOW);
         }
     }
 
