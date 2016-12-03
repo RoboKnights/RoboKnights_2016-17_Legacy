@@ -104,6 +104,10 @@ public abstract class OpMode_5220 extends LinearOpMode
     protected static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     protected static final int ENCODER_COUNTS_PER_ROTATION = 1120; //WAS 1440
 
+    protected static double temp = 0;
+    protected static double right = 0;
+    protected static double theta = 0;
+
 
     //CONFIGURABLE CONSTANTS:
 
@@ -210,7 +214,7 @@ public abstract class OpMode_5220 extends LinearOpMode
 
         cdim = hardwareMap.deviceInterfaceModule.get("Device Interface Module 3");
         waitFullCycle();
-        //navX = AHRS.getInstance(cdim, NAVX_DIM_I2C_PORT, AHRS.DeviceDataType.kProcessedData);
+        navX = AHRS.getInstance(cdim, NAVX_DIM_I2C_PORT, AHRS.DeviceDataType.kProcessedData);
 
         leftFrontMotor = hardwareMap.dcMotor.get("lf");
         rightFrontMotor = hardwareMap.dcMotor.get("rf");
@@ -273,7 +277,7 @@ public abstract class OpMode_5220 extends LinearOpMode
         gyroSensor.resetZAxisIntegrator();
         waitFullCycle();
 */
-       // navX.zeroYaw();
+        navX.zeroYaw();
 
         phase = INIT;
 
@@ -354,13 +358,13 @@ public abstract class OpMode_5220 extends LinearOpMode
             debugLoopOn = true;
             while (debugLoopOn && opModeIsActive())
             {
-/*
+
                 yaw = df.format(navX.getYaw());
                 pitch = df.format(navX.getPitch());
                 roll = df.format(navX.getRoll());
                 fh = df.format(navX.getFusedHeading());
                 yprf = yaw + ", " + pitch + ", " + roll + ", " + fh;
-*/
+
                 telemetry.addData("1", "Time Elapsed:" + gameTimer.time());
 
                 telemetry.addData("2", "LFM: " + leftFrontMotor.getCurrentPosition() + ", RFM: " + rightFrontMotor.getCurrentPosition());
@@ -369,9 +373,8 @@ public abstract class OpMode_5220 extends LinearOpMode
 
                 telemetry.addData("5", "Down: R = " + colorSensorDown.red() + ", G = " + colorSensorDown.green() + ", B = " + colorSensorDown.blue() + ", A = " +  colorSensorDown.alpha());
                 telemetry.addData("6", "Front: R = " + colorSensorFront.red() + ", G = " + colorSensorFront.green() + ", B = " + colorSensorFront.blue() + ", A = " +  colorSensorFront.alpha());
-                //telemetry.addData ("7", "Y,P,R,FH: " + yprf);
+                telemetry.addData ("7", "Y,P,R,FH: " + yprf);
                 telemetry.addData("8", "Shooter Tilt: " + SHOOTER_TILT[currentShooterPreset]);
-
 
                 //waitOneFullHardwareCycle();
                 telemetry.update();
