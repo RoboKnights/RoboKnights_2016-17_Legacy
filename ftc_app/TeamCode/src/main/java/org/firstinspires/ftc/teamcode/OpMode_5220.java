@@ -221,8 +221,10 @@ public abstract class OpMode_5220 extends LinearOpMode
         leftBackMotor = hardwareMap.dcMotor.get("lb");
         rightBackMotor = hardwareMap.dcMotor.get("rb");
 
-        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        //leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        //leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
         driveMotors[0] = leftFrontMotor;
         driveMotors[1] = rightFrontMotor;
