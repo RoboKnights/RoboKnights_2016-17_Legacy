@@ -74,6 +74,11 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
     private boolean polarOn = false;
     private boolean resetAutomationOn = false;
     private boolean scoringAutomationOn = false;
+    private boolean fieldOrient = false;
+
+    private double throttle, direction, strafe;
+    private double temp, theta;
+    private double leftFront, leftBack, rightBack, rightFront;
 
     private static final boolean DPAD_LIFT = false;
     private static final boolean DPAD_DRIVE = true;
@@ -150,14 +155,14 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
         while (runConditions())
         {
 
+            if(!fieldOrient) {
                 double leftPower;
                 double rightPower;
 
                 double throttle = (-(gamepad1.left_stick_y - g1Stick1Yinit));
                 double direction = (gamepad1.left_stick_x - g1Stick1Xinit);
 
-                if (reverse)
-                {
+                if (reverse) {
                     throttle = -throttle;
                 }
 
@@ -188,28 +193,22 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                 }
                 */
                 boolean powersZero = true;
-                if (Math.abs (leftPower) < 0.05)
-                {
+                if (Math.abs(leftPower) < 0.05) {
                     leftPower = 0;
-                }
-                else powersZero = false;
+                } else powersZero = false;
 
-                if (Math.abs (rightPower) < 0.05)
-                {
+                if (Math.abs(rightPower) < 0.05) {
                     rightPower = 0;
-                }
-                else powersZero = false;
+                } else powersZero = false;
 
-                if (powersZero)
-                {
+                if (powersZero) {
                     double frontPower;
                     double backPower;
 
                     throttle = (-(gamepad1.right_stick_y - g1Stick1Yinit));
                     direction = (gamepad1.right_stick_x - g1Stick1Xinit);
 
-                    if (reverse)
-                    {
+                    if (reverse) {
                         throttle = -throttle;
                     }
 
@@ -219,35 +218,25 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                     backPower = Range.clip(backPower, -2, 2);
                     frontPower = Range.clip(frontPower, -2, 2);
 
-                    if (Math.abs (frontPower) < 0.05)
-                    {
+                    if (Math.abs(frontPower) < 0.05) {
                         frontPower = 0;
                     }
 
-                    if (Math.abs (backPower) < 0.05)
-                    {
+                    if (Math.abs(backPower) < 0.05) {
                         backPower = 0;
                     }
 
-                    if (frontPower == 0 && backPower == 0)
-                    {
-                        if (dPadMode == DPAD_DRIVE)
-                        {
+                    if (frontPower == 0 && backPower == 0) {
+                        if (dPadMode == DPAD_DRIVE) {
                             if (gamepad1.dpad_up) setDrivePower(-0.21);
                             else if (gamepad1.dpad_down) setDrivePower(0.21);
                             else if (gamepad1.dpad_right) setStrafePower(-0.34);
                             else if (gamepad1.dpad_left) setStrafePower(0.34);
                             else setDrivePower(0);
-                        }
-
-                        else
-                        {
+                        } else {
                             setDrivePower(0);
                         }
-                    }
-
-                    else
-                    {
+                    } else {
 
                         setMotorPower(leftFrontMotor, frontPower);
                         setMotorPower(rightFrontMotor, backPower);
@@ -256,17 +245,12 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                     }
 
                     strafing = true;
-                }
-
-                else
-                {
+                } else {
                     strafing = false;
                 }
 
-                if (!strafing)
-                {
-                    if (reverse)
-                    {
+                if (!strafing) {
+                    if (reverse) {
                         leftPower = -leftPower;
                         rightPower = -rightPower;
                     }
@@ -275,11 +259,56 @@ public class TeleOp_5220 extends OpMode_5220 //this is a comment. It is a long c
                     setRightDrivePower(rightPower);
                 }
 
-                if (gamepad1.start && !prevGamepad1.start)
-                {
+                if (gamepad1.start && !prevGamepad1.start) {
                     reverse = !reverse;
                     //sleep (20);
                 }
+            }
+
+            else
+            {
+                double throttle = (-(gamepad1.left_stick_y - g1Stick1Yinit));
+                double direction = (gamepad1.left_stick_x - g1Stick1Xinit);
+                double strafe = (gamepad1.right_stick_x - g1Stick1Xinit);
+
+                theta = Math.toRadians(navX.getYaw());
+
+                temp = throttle * Math.cos(theta) - strafe * Math.sin(theta);
+                strafe = throttle * Math.sin(theta) + strafe * Math.cos(theta);
+                throttle = temp;
+
+                leftFront = throttle + direction + strafe;
+                leftBack = throttle + direction - strafe;
+                rightBack = throttle - direction + strafe;
+                rightFront = throttle - direction - strafe;
+
+                leftFront = Range.clip(leftFront, -2, 2);
+                leftBack = Range.clip(leftBack, -2, 2);
+                rightBack = Range.clip(rightBack, -2, 2);
+                rightFront = Range.clip(rightFront, -2, 2);
+
+                boolean powersZero = true;
+                if (Math.abs(leftFront) < 0.05) {
+                    leftFront = 0;
+                }
+
+                if (Math.abs(leftBack) < 0.05) {
+                    leftBack = 0;
+                }
+
+                if (Math.abs(rightBack) < 0.05) {
+                    rightBack = 0;
+                }
+
+                if (Math.abs(rightFront) < 0.05) {
+                    rightFront = 0;
+                }
+
+                setMotorPower(leftFrontMotor, leftFront);
+                setMotorPower(leftBackMotor, leftBack);
+                setMotorPower(rightBackMotor, rightBack);
+                setMotorPower(rightFrontMotor, rightFront);
+            }
 
             if (gamepad1.back && !prevGamepad1.back)
             {
